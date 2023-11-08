@@ -5,6 +5,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
 <h1>developing the landing page</h1>
+<p>testando branches....</p>
     </main>
   )
 }

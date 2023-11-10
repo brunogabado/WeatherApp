@@ -1,9 +1,16 @@
+"use client"
+
+import styled from "styled-components";
+import LandingPage from "./pages/LandingPage";
+
+
+const StyledContainer = styled.div`
+background-color: red;`
 
 export default function Home() {
   return (
-    <main>
-<h1>developing the landing page</h1>
-<p>testando</p>
-    </main>
+      <StyledContainer>
+        <LandingPage />
+      </StyledContainer>
   )
 }

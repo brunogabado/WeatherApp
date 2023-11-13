@@ -6,9 +6,11 @@ import { LandingPage } from "./pages/LandingPage";
 
 
 const StyledContainer = styled.div`
-
-background-color: rgb(252, 236, 221);
-height: 100%;`
+margin: 2%;
+border-radius:30px;
+box-shadow: 25px 0 20px -20px rgba(0, 0, 0, 0.45), -25px 0 20px -20px rgba(0, 0, 0, 0.45);
+background: linear-gradient(to bottom, #57a7d1 0%, #F0F8FF 100%);
+height: 96%;`
 
 export default function Home() {
   return (

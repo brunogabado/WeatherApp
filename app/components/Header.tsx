@@ -28,7 +28,8 @@ font-family: 'Bebas Neue', sans-serif;
 width: 100px;
 height: 40px;
 border: none;
-background-color: rgb(252, 236, 221);
+background: none;
+;
 
 `
 
@@ -46,9 +47,8 @@ const Header: React.FC = () => {
                 </LogoContainer>
                 <Navbar>
                     <NavbarButton>Home</NavbarButton>
-                    <NavbarButton>Dashboard</NavbarButton>
                     <NavbarButton>My Profile</NavbarButton>
-                    <NavbarButton>Settings</NavbarButton>
+                    <NavbarButton>Login</NavbarButton>
                 </Navbar>
             </HeaderContainer>
         </>

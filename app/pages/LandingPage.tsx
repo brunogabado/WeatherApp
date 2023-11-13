@@ -41,7 +41,7 @@ object-fit: cover;
 
 const ButtonLog = styled.button`
 font-size: 22px;
-color: #F4CE14;
+color: white;
 height: 60px;
 width: 250px;
 background: #57a7d1;

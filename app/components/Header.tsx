@@ -1,15 +1,14 @@
 "use client"
 
 import styled from "styled-components";
-import { StyledTitle } from "../pages/LandingPage";
 
 const HeaderContainer = styled.div`
 display: flex;
+height: 90px;
 justify-content: space-between;
 margin: 0 20px 0 20px;
 border-bottom: 1px solid ;
 `
-
 const StyledTitleLogo = styled.h1`
 diplay: flex;
 align-items: center;
@@ -19,41 +18,59 @@ align-items: center;
 }
 
 `
-
 const LogoContainer = styled.div`
 display: flex;
 font-family: 'Bebas Neue', sans-serif;
-align-items: center;`
-
+align-items: center;
+`
 const Navbar = styled.div`
 display: flex;
-align-items: center;
-gap: 5px
-`
+justify-content: space-between;
+gap: 5px;
 
+@media(max-width: 715px){
+    position: fixed;
+    left: -100%;
+    top:95px;
+    gap:0;
+    flex-direction: column;
+    text-align: center;
+    transition: 0.3s;
+    }
+
+    &.active {
+left:0;
+      }
+`
 const NavbarButton = styled.button`
 font-size: 16px;
+align-self: center;
 font-family: 'Bebas Neue', sans-serif;
 width: 100px;
 height: 40px;
 border: none;
 background: none;
-;
-@media only screen and (max-width: 600px){
-	font-size: 14px;
-font-family: 'Bebas Neue', sans-serif;
-width: 80px;
-height: 40px;
-}
-`
+transition: 0.7s ease;
 
+&:hover {
+    color: white;
+    font-size: 18px;
+}
+
+`
 const BurgerMenu = styled.button`
 display: none;
-@media(max-width: 600px){
+cursor: pointer;
+height: 50%;
+align-self: center;
+background: none;
+border: none;
+
+@media(max-width: 715px){
 display:block
+
 }
 `
-
 const Header: React.FC = () => {
     return (
         <>
@@ -70,23 +87,23 @@ const Header: React.FC = () => {
                     <NavbarButton>Home</NavbarButton>
                     <NavbarButton>My Profile</NavbarButton>
                     <NavbarButton>Login</NavbarButton>
-                    <BurgerMenu><svg fill="#000000" height="50%" width="50%" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 297.001 297.001">
+                </Navbar>
+                <BurgerMenu><svg fill="#000000" height="60%" width="60%" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 297.001 297.001">
+                    <g>
                         <g>
                             <g>
-                                <g>
-                                    <path d="M273.736,0.001H23.264C10.436,0.001,0,10.436,0,23.264v23.789C0,59.88,10.436,70.316,23.264,70.316h250.473
+                                <path d="M273.736,0.001H23.264C10.436,0.001,0,10.436,0,23.264v23.789C0,59.88,10.436,70.316,23.264,70.316h250.473
 				c12.827,0,23.264-10.435,23.264-23.263V23.264C297,10.436,286.564,0.001,273.736,0.001z"/>
-                                    <path d="M273.736,113.344H23.264C10.436,113.344,0,123.779,0,136.605v23.789c0,12.827,10.436,23.263,23.264,23.263h250.473
+                                <path d="M273.736,113.344H23.264C10.436,113.344,0,123.779,0,136.605v23.789c0,12.827,10.436,23.263,23.264,23.263h250.473
 				c12.827,0,23.264-10.435,23.264-23.263v-23.789C297,123.779,286.564,113.344,273.736,113.344z"/>
-                                    <path d="M273.736,226.686H23.264C10.436,226.686,0,237.121,0,249.949v23.789C0,286.565,10.436,297,23.264,297h250.473
+                                <path d="M273.736,226.686H23.264C10.436,226.686,0,237.121,0,249.949v23.789C0,286.565,10.436,297,23.264,297h250.473
 				C286.564,297,297,286.565,297,273.737v-23.789C297,237.121,286.564,226.686,273.736,226.686z"/>
-                                </g>
                             </g>
                         </g>
-                    </svg></BurgerMenu>
+                    </g>
+                </svg></BurgerMenu>
 
-                </Navbar>
             </HeaderContainer>
         </>
     )

@@ -1,7 +1,9 @@
-
+import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Dashboard, { dashboardProps } from "../components/Dashboard";
+import axios from "axios";
 
 const StyledTitle = styled.h1`
 diplay: flex;
@@ -65,6 +67,10 @@ height: auto;
 justify-content: center;
 `
 const DashboardContainer = styled.div`
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
 width: 100%;
 height: 80%;
 background-color: #57a7d1;
@@ -93,9 +99,65 @@ transition: 0.7s ease;
 @media (max-width: 1220px){
     height: 40px;
     width: 170px;
-}`
+}
+`
+
+
 
 const LandingPage: React.FC = () => {
+
+    interface WeatherData {
+        dt_txt: string;
+        main: {
+            temp: number;
+        };
+        weather: [{ icon: string }]
+    }
+
+    const [temperaturesObj, setTemperaturesObj] = useState<{ [date: string]: number[] }>({});
+    const [iconsObj, setIconsObj] = useState<{ [date: string]: string[] }>({})
+    let city: string = ""
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("https://api.openweathermap.org/data/2.5/forecast?q=Lisbon&appid=403a9c02b9a56c52b7c077f403577b67&units=metric")
+
+                city = response.data.city.name
+                const newTemperaturesObj: { [date: string]: number[] } = {};
+                const newIconsObj: { [date: string]: string[] } = {};
+
+                response.data.list.forEach((item: WeatherData) => {
+                    const date = item.dt_txt.split(' ')[0];
+                    const temperature = item.main.temp;
+                    const icon = item.weather[0].icon
+
+                    if (!newTemperaturesObj[date]) {
+                        newTemperaturesObj[date] = [];
+                        newIconsObj[date] = []
+                    }
+
+                    newTemperaturesObj[date].push(temperature);
+                    newIconsObj[date].push(icon)
+                });
+
+                setTemperaturesObj(newTemperaturesObj);
+                setIconsObj(newIconsObj);
+
+
+
+            }
+            catch (error) {
+                console.log(error)
+            }
+        };
+
+        fetchData()
+    }, [])
+
+    console.log(iconsObj)
+
     return (
         <>
             <Header />
@@ -125,7 +187,9 @@ const LandingPage: React.FC = () => {
                 </InfoContainer>
             </MainContent>
             <DashboardContainer>
-
+                {Object.values(temperaturesObj).map((value, index) => {
+                    return <Dashboard key={index} temperaturesArr={value} iconsArr={Object.values(iconsObj)[index]} />
+                })}
             </DashboardContainer>
             <Footer />
         </>

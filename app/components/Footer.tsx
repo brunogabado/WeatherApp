@@ -17,11 +17,13 @@ justify-content: space-around;
 const FooterDescriptionContainer = styled.div`
 display: flex;
 flex-direction: column;
-justify-content: space-around;`
+justify-content: center;
+font-weight: 600;
+`
 
 const FooterDescription = styled.p`
 margin: 0;
-padding: 0;
+padding: 5px;
 `
 
 const Footer: React.FC = () => {
@@ -42,8 +44,7 @@ const Footer: React.FC = () => {
 
                 <FooterDescriptionContainer>
                     <FooterDescription>WeatherWise© 2023</FooterDescription>
-                    <FooterDescription>Made by Bruno Gabado</FooterDescription>
-                    <FooterDescription>Final Project to <a href="https://www.eddisrupt.com/pt">Eddisrupt</a> bootcamp 2023</FooterDescription>
+                    <FooterDescription>Made by Bruno Gabado <br></br>as the final Project to <a href="https://www.eddisrupt.com/pt">Eddisrupt</a> bootcamp 2023</FooterDescription>
                 </FooterDescriptionContainer>
             </FooterContainer >
         </>

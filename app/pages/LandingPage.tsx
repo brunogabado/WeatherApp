@@ -178,7 +178,6 @@ const LandingPage: React.FC = () => {
         const maxTemp = Math.max(...temperaturesObj[day]);
         const minTemp = Math.min(...temperaturesObj[day]);
         const maxWind = Math.max(...windObj[day]);
-
         dashboardData.push({
             wind: maxWind,
             maxTemp: maxTemp,

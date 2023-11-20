@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Dashboard, { dashboardProps } from "../components/Dashboard";
+import Dashboard from "../components/Dashboard";
 import axios from "axios";
 import SearchBar from '../components/SearchBar';
 
@@ -72,9 +72,7 @@ flex-direction: column;
 align-items: center;
 justify-content: center;
 width: 100%;
-height: 80%;
 background-color: #57a7d1;
-padding-top: 50px;
 `
 const Video = styled.video`
 max-width: 100%;
@@ -114,79 +112,136 @@ const LandingPage: React.FC = () => {
         weather: [{ icon: string }]
     }
 
+    interface searchedCitiesInfo {
+        text_pt: string,
+        place_name: string,
+        geometry: {
+            coordinates: number[]
+        }
+    }
+
+    interface cityInfo {
+        searchedName: string,
+        localName: string,
+        coordinates: []
+    }
+
     type dashboardDataObj = {
         wind: Number;
         maxTemp: Number;
         minTemp: Number;
-        cityName: string;
         date: string;
+        cityName: string;
     }
 
-    const dashboardData: dashboardDataObj[] = []
+
 
     //states
-    const [temperaturesObj, setTemperaturesObj] = useState<{ [date: string]: number[] }>({});
-    const [windObj, setWindObj] = useState<{ [date: string]: number[] }>({})
-    const [iconsObj, setIconsObj] = useState<{ [date: string]: string[] }>({})
-    const [city, setCity] = useState<string>("Lisbon")
-
-    useEffect(() => {
-
-        const fetchData = async () => {
-            //requesting the data of 5 days forecast
-            try {
-                const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=403a9c02b9a56c52b7c077f403577b67&units=metric`)
-                console.log(response.data)
-                //objects with some arrays with the valeus for each day
-                const newTemperaturesObj: { [date: string]: number[] } = {};
-                const newIconsObj: { [date: string]: string[] } = {};
-
-
-                //iterate over the response, over every list(3 in 3 hours) to get every value needed by day.
-                response.data.list.forEach((item: WeatherData) => {
-                    const date = item.dt_txt.split(' ')[0];
-                    const wind = item.wind.speed
-                    const temperature = item.main.temp;
-                    const icon = item.weather[0].icon
-
-                    //check if the day was already created, if it's not, create
-                    if (!newTemperaturesObj[date]) {
-                        newTemperaturesObj[date] = [];
-                        newIconsObj[date] = []
-                        windObj[date] = []
-                    }
-                    //push the values of the list to day day's array
-                    newTemperaturesObj[date].push(temperature);
-                    newIconsObj[date].push(icon)
-                    windObj[date].push(wind)
-                });
-
-                //setting a new data's object to re-render
-                setTemperaturesObj(newTemperaturesObj);
-                setIconsObj(newIconsObj);
-                dashboardData.length = 0
-            }
-            catch (error) {
-                console.log(error)
-            }
-        };
-
-        fetchData()
-    }, [city])
-
-    Object.keys(temperaturesObj).forEach((day) => {
-        const maxTemp = Math.max(...temperaturesObj[day]);
-        const minTemp = Math.min(...temperaturesObj[day]);
-        const maxWind = Math.max(...windObj[day]);
-        dashboardData.push({
-            wind: maxWind,
-            maxTemp: maxTemp,
-            minTemp: minTemp,
-            cityName: city,
-            date: day
-        })
+    const [weatherData, setWeatherData] = useState({
+        temperaturesObj: {} as { [date: string]: number[] },
+        windObj: {} as { [date: string]: number[] },
+        iconsObj: {} as { [date: string]: string[] },
+        dashboardExtraData: [] as dashboardDataObj[]
     });
 
+    const [autoCompleteList, setAutoCompleteList] = useState<cityInfo[]>([])
+    const [coordinates, setCoordinates] = useState<{ lat: number; lon: number }>({ lat: 0, lon: 0 });
+    const [city, setCity] = useState<cityInfo>()
+
+    const searchCity = async (searchCity: string) => {
+        try {
+            //Search cities by name to get a list to do an autocomplete.
+            const response2 = await axios.get(`https://api.maptiler.com/geocoding/${city}.json?key=PTLty8xCfargkFm295Ip&language=pt`)
+            console.log(response2.data.features)
+
+            //creating an array to store all the cities we received in the response.
+            const NewAutoCompleteList: cityInfo[] = response2.data.features.map((item: searchedCitiesInfo) => ({
+                searchedName: item.text_pt,
+                localName: item.place_name,
+                coordinates: item.geometry.coordinates,
+            }));
+
+            //setting the list to render the aautocomeplete
+            setAutoCompleteList(NewAutoCompleteList)
+
+        }
+        catch (e) {
+            console.log("error: ", e)
+        }
+
+    }
+
+    const fetchData = async () => {
+        //requesting the data of 5 days forecast 
+        try {
+            const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=24&lon=0&appid=80d4983145654cecddf9da59eb27e822`)
+
+            //objects with some arrays with the valeus for each day
+            const newTemperaturesObj: { [date: string]: number[] } = {};
+            const newIconsObj: { [date: string]: string[] } = {};
+            const newWindObj: { [date: string]: number[] } = {};
+            const newDashboardData: dashboardDataObj[] = []
+
+            //iterate over the response, over every list(3 in 3 hours) to get every value needed by day.
+            response.data.list.forEach((item: WeatherData) => {
+                const date = item.dt_txt.split(' ')[0];
+                const wind = item.wind.speed
+                const temperature = item.main.temp;
+                const icon = item.weather[0].icon
+
+                //check if the day was already created, if it's not, create
+                if (!newTemperaturesObj[date]) {
+                    newTemperaturesObj[date] = [];
+                    newIconsObj[date] = []
+                    newWindObj[date] = []
+                }
+                //push the values of the list to the day's array
+                newTemperaturesObj[date].push(temperature);
+                newIconsObj[date].push(icon)
+                newWindObj[date].push(wind)
+            });
+
+            //setting a new data's object to re-render
+
+            Object.keys(newTemperaturesObj).forEach((day) => {
+                const maxTemp = Math.max(...newTemperaturesObj[day]);
+                const minTemp = Math.min(...newTemperaturesObj[day]);
+                const maxWind = Math.max(...newWindObj[day]);
+                newDashboardData.push({
+                    wind: maxWind,
+                    maxTemp: maxTemp,
+                    minTemp: minTemp,
+                    date: day,
+                    cityName: city?.localName || 'Unknown City',
+                });
+            });
+
+            setWeatherData({
+                temperaturesObj: newTemperaturesObj,
+                windObj: newWindObj,
+                iconsObj: newIconsObj,
+                dashboardExtraData: newDashboardData
+            })
+
+        }
+        catch (error) {
+            console.log(error)
+        }
+    };
+
+    const selectList = (city: cityInfo) => {
+        setCity(city);
+        // setCoordinates({
+        //     lat: city.coordinates[0],
+        //     lon: city.coordinates[1]
+        // })
+
+    }
+
+    console.log("weatherData: ", weatherData)
+    console.log("autoCompleteList: ", autoCompleteList)
+    console.log("city:  ", city)
+    console.log("rendering................................................")
 
     return (
         <>
@@ -210,17 +265,19 @@ const LandingPage: React.FC = () => {
                     <StyledTitle>Don't let unexpected weather disrupt your plans. Plan your life wisely with WeatherWise !</StyledTitle>
                     <p>Create a list of cities, then easily compare them to your current location by logging in.</p>
                     <ButtonContainer>
-                        <ButtonLog>Login</ButtonLog>
+                        <ButtonLog onClick={fetchData}>Login</ButtonLog>
                         <ButtonLog>Register</ButtonLog>
                     </ButtonContainer>
 
                 </InfoContainer>
             </MainContent>
             <DashboardContainer>
-                <SearchBar setCity={setCity} />
-                {Object.values(temperaturesObj).map((value, index) => {
-                    return <Dashboard key={index} temperaturesArr={value} iconsArr={Object.values(iconsObj)[index]} dashboardData={dashboardData[index]} />
+                <SearchBar autoCompleteList={autoCompleteList} searchCity={searchCity} />
+
+                {city && Object.values(weatherData.temperaturesObj).map((value, index) => {
+                    return <Dashboard key={index} temperaturesArr={value} iconsArr={Object.values(weatherData.iconsObj)[index]} dashboardData={weatherData.dashboardExtraData[index]} />
                 })}
+
             </DashboardContainer>
             <Footer />
         </>

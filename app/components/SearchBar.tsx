@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const SearchBarContainer = styled.div`
 padding: 30px;
@@ -66,22 +66,36 @@ interface searchBarProps {
 }
 
 const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, selectCity }) => {
-
+//useState to control the extend or not of the autoComplete dropdown div
     const [openList, setOpenList] = useState<boolean>(false)
 
+    //setting a Ref to control the calls to the searchCity function. Doing this we are controlling the request to the api.
+    const timeoutRef = useRef<number | null>(null);
+
+    //function to control the flow and call the autocompleteList
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
 
-        setTimeout(() => {
+        //if a timeout exists when we call this function, we clear before create a new one
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
+        //creating a new timeout
+        timeoutRef.current = window.setTimeout(() => {
+
             if (e.target.value.length > 1) {
                 setOpenList(true)
+                //function where the api is
                 searchCity(e.target.value)
             } else {
+                //open the autocomplete list/dropdown
                 setOpenList(false)
             }
         }, 1200);
     };
 
+    //function to handle the click in one of the options and call the function that get the forecast
     const handleOptionClick = (e: React.MouseEvent, index: number) => {
         console.log(e)
         e.preventDefault()
@@ -92,7 +106,6 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
         <form>
             <SearchBarContainer>
                 <SearchInput placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
-
                 {openList &&
                     <List>
                         {autoCompleteList.map((city, index) => (<Option onClick={(event) => handleOptionClick(event, index)} key={index}>{city.localName}</Option>))}

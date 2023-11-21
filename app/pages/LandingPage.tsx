@@ -48,6 +48,15 @@ align-items: center;
 justify-content: space-around;
 padding: 7% 0 7% 0;
 background-color: #D8F2FF;
+z-index: 10;
+position: relative;
+
+background: url('580b585b2edbce24c47b263e.png') 95% 10%/cover no-repeat,
+url('580b585b2edbce24c47b263e.png') 85% 90%/cover no-repeat,
+url('580b585b2edbce24c47b263e.png') left center/cover no-repeat,
+linear-gradient(rgba(216, 242, 255, 0.8), rgba(216, 242, 255, 0.8));
+
+background-size: 20%;
 `
 const InfoContainer = styled.div`
 display: flex;
@@ -57,12 +66,12 @@ width: 700px;
 height: 80%;
 justify-items: center;
 
-
 @media (max-width: 900px){
     font-size: 140%;
 }
 
-@media (max-width: 700px){
+@media (max-width: 750px){
+    width: 500px;
     gap: 20px;
     font-size: 110%;
 }
@@ -72,24 +81,12 @@ justify-items: center;
     font-size: 90%;
     width: 70%;
 }
-`
-const VideoContainer = styled.div`
-display: flex;
-flex-wrap: wrap;
-justify-content: space-between;
-width: 700px;
-margin-top: 50px
+
 `
 const ButtonContainer = styled.div`
 display: flex;
 height: auto;
 justify-content: center;
-`
-const Video = styled.video`
-border-radius: 50%;
-flex-wrap: wrap;
-max-width: 150px;
-object-fit: contain;
 `
 const ButtonLog = styled.button`
 font-size: 75%;
@@ -142,10 +139,12 @@ const LandingPage: React.FC = () => {
     const [coordinates, setCoordinates] = useState<{ lat: number, lon: number }>({ lat: 0, lon: 0 });
     const [city, setCity] = useState<cityInfo>()
 
+    //function to get the autocomplete options
     const searchCity = async (city: string) => {
         try {
             //Search cities by name to get a list to do an autocomplete.
             const response = await axios.get(`https://api.maptiler.com/geocoding/${city}.json?key=PTLty8xCfargkFm295Ip&language=pt`)
+console.log("requested !")
 
             //creating an array to store all the cities we received in the response.
             const NewAutoCompleteList: cityInfo[] = response.data.features.map((item: searchedCitiesInfo) => ({
@@ -226,7 +225,9 @@ const LandingPage: React.FC = () => {
         fetchData()
     }, [city]);
 
+    //function to set the city choosed by the user, to get the forecast
     const selectCity = (city: cityInfo) => {
+        //setting the city and coordinates, making the page re-render
         setCity(city);
         setCoordinates({
             lat: city.coordinates[0],
@@ -234,16 +235,13 @@ const LandingPage: React.FC = () => {
         })
     }
 
-    // console.log("weatherData: ", weatherData)
-    // console.log("autoCompleteList: ", autoCompleteList)
-    // console.log("city:  ", city)
-    // console.log("Landing page rendering................................................")
 
     return (
         <>
             <Header />
             <MainContent>
                 <InfoContainer>
+                    {/* <img src='580b585b2edbce24c47b263e.png' /> */}
                     <StyledTitle>Don't let unexpected weather disrupt your plans. Plan your life wisely with WeatherWise !</StyledTitle>
                     <p>Create a list of cities, then easily compare them to your current location by logging in.</p>
                     <ButtonContainer>
@@ -252,20 +250,6 @@ const LandingPage: React.FC = () => {
                     </ButtonContainer>
 
                 </InfoContainer>
-                {/* <VideoContainer>
-                    <Video loop autoPlay muted>
-                        <source src="\sun.mp4" type="video/mp4" />
-                    </Video>
-                    <Video loop autoPlay muted>
-                        <source src="\rain.mp4" type="video/mp4" />
-                    </Video>
-                    <Video loop autoPlay muted>
-                        <source src="\arcoiris.mp4" type="video/mp4" />
-                    </Video>
-                    <Video loop autoPlay muted>
-                        <source src="\trovao.mp4" type="video/mp4" />
-                    </Video>
-                </VideoContainer> */}
             </MainContent>
             <DashboardContainer>
                 <SearchTitle>Search the forecast for 5 days at any location</SearchTitle>

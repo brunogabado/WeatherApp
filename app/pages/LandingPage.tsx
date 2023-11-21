@@ -6,6 +6,36 @@ import Dashboard from "../components/Dashboard";
 import axios from "axios";
 import SearchBar from '../components/SearchBar';
 
+interface WeatherData {
+    dt_txt: string;
+    wind: { speed: number };
+    main: { temp: number };
+    weather: [{ icon: string }]
+}
+
+interface searchedCitiesInfo {
+    text_pt: string,
+    place_name: string,
+    geometry: {
+        coordinates: number[]
+    }
+}
+
+interface cityInfo {
+    searchedName: string,
+    localName: string,
+    coordinates: number[]
+}
+
+type dashboardDataObj = {
+    wind: Number;
+    maxTemp: Number;
+    minTemp: Number;
+    date: string;
+    cityName: string;
+}
+
+
 const StyledTitle = styled.h1`
 diplay: flex;
 align-items: center;
@@ -17,6 +47,7 @@ flex-direction: column;
 align-items: center;
 justify-content: space-around;
 padding: 7% 0 7% 0;
+background-color: #D8F2FF;
 `
 const InfoContainer = styled.div`
 display: flex;
@@ -54,7 +85,6 @@ display: flex;
 height: auto;
 justify-content: center;
 `
-
 const Video = styled.video`
 border-radius: 50%;
 flex-wrap: wrap;
@@ -90,38 +120,15 @@ align-items: center;
 justify-content: center;
 width: 100%;
 background-color: #57a7d1;
+padding: 25px 0;
+
+`
+const SearchTitle = styled.h3`
+margin: 0;
 `
 
 const LandingPage: React.FC = () => {
 
-    interface WeatherData {
-        dt_txt: string;
-        wind: { speed: number };
-        main: { temp: number };
-        weather: [{ icon: string }]
-    }
-
-    interface searchedCitiesInfo {
-        text_pt: string,
-        place_name: string,
-        geometry: {
-            coordinates: number[]
-        }
-    }
-
-    interface cityInfo {
-        searchedName: string,
-        localName: string,
-        coordinates: number[]
-    }
-
-    type dashboardDataObj = {
-        wind: Number;
-        maxTemp: Number;
-        minTemp: Number;
-        date: string;
-        cityName: string;
-    }
 
     //states
     const [weatherData, setWeatherData] = useState({
@@ -139,7 +146,7 @@ const LandingPage: React.FC = () => {
         try {
             //Search cities by name to get a list to do an autocomplete.
             const response = await axios.get(`https://api.maptiler.com/geocoding/${city}.json?key=PTLty8xCfargkFm295Ip&language=pt`)
-            console.log(response)
+
             //creating an array to store all the cities we received in the response.
             const NewAutoCompleteList: cityInfo[] = response.data.features.map((item: searchedCitiesInfo) => ({
                 searchedName: item.text_pt,
@@ -162,7 +169,7 @@ const LandingPage: React.FC = () => {
             //requesting the data of 5 days forecast 
             try {
                 const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lon}&lon=${coordinates.lat}&appid=403a9c02b9a56c52b7c077f403577b67&units=metric`)
-
+                console.log(response)
 
                 //objects with some arrays with the valeus for each day
                 const newTemperaturesObj: { [date: string]: number[] } = {};
@@ -245,7 +252,7 @@ const LandingPage: React.FC = () => {
                     </ButtonContainer>
 
                 </InfoContainer>
-                <VideoContainer>
+                {/* <VideoContainer>
                     <Video loop autoPlay muted>
                         <source src="\sun.mp4" type="video/mp4" />
                     </Video>
@@ -258,10 +265,10 @@ const LandingPage: React.FC = () => {
                     <Video loop autoPlay muted>
                         <source src="\trovao.mp4" type="video/mp4" />
                     </Video>
-                </VideoContainer>
+                </VideoContainer> */}
             </MainContent>
             <DashboardContainer>
-                
+                <SearchTitle>Search the forecast for 5 days at any location</SearchTitle>
                 <SearchBar autoCompleteList={autoCompleteList} searchCity={searchCity} selectCity={selectCity} />
 
                 {city && Object.values(weatherData.temperaturesObj).map((value, index) => {

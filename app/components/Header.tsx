@@ -10,7 +10,6 @@ display: flex;
 height: 90px;
 justify-content: space-between;
 margin: 0 20px 0 20px;
-border-bottom: 1px solid ;
 `
 const StyledTitleLogo = styled.h1`
 diplay: flex;

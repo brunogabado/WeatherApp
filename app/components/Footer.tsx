@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
 
                 <FooterDescriptionContainer>
                     <FooterDescription>WeatherWise© 2023</FooterDescription>
-                    <FooterDescription>Made by Bruno Gabado <br></br>as the final Project to <a href="https://www.eddisrupt.com/pt">Eddisrupt</a> bootcamp 2023</FooterDescription>
+                    <FooterDescription>Made by Bruno Gabado <br></br><a href="https://www.eddisrupt.com/pt">Eddisrupt</a> bootcamp 2023</FooterDescription>
                 </FooterDescriptionContainer>
             </FooterContainer >
         </>

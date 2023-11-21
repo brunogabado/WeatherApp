@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import React, { useState } from 'react';
 
-
-
 const SearchBarContainer = styled.div`
 padding: 30px;
 `
@@ -34,41 +32,47 @@ border: none;
 font-size: 16px
 `
 
-export interface searchBarProps {
-    autoCompleteList: {
-        searchedName: string,
-        localName: string,
-        coordinates: []
-    }[],
+type cityInfo = {
+    searchedName: string,
+    localName: string,
+    coordinates: number[]
+};
+
+interface searchBarProps {
+    autoCompleteList: cityInfo[],
     searchCity: (city: string) => void,
-
-
+    selectCity: (city: cityInfo) => void
 }
 
-const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity }) => {
-    console.log(autoCompleteList)
-    console.log(searchCity)
+const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, selectCity }) => {
 
-    const handleClick = (e: React.FormEvent) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
+
         setTimeout(() => {
-            console.log("o codigo rodou")
-            // console.log('Delayed code executed after 1000 milliseconds');
-        }, 700);
+            if (e.target.value) {
+                searchCity(e.target.value)
+            }
+        }, 1500);
     };
+
+    const handleOptionClick = (e: React.MouseEvent, index: number) => {
+        e.preventDefault()
+        selectCity(autoCompleteList[index])
+        autoCompleteList.length = 0
+    }
+
+    console.log("searchBar rendering")
 
     return (
         <form>
             <SearchBarContainer>
-                <SearchInput placeholder="Search for a city..." onChange={(event) => handleClick(event)} />
-                <List>
-                    {/* <Option value={index} onClick={handleClick}>Lisbon</Option> */}
-                    <Option>Lamarosa</Option>
-                    <Option>Lisbon</Option>
-                    <Option>Lamarosa</Option>
-                    <Option>Lisbon</Option>
-                    <Option>Lamarosa</Option>
-                </List>
+                <SearchInput placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
+
+                {autoCompleteList.length > 0 &&
+                    <List>
+                        {autoCompleteList.map((city, index) => (<Option onClick={(event) => handleOptionClick(event, index)} key={index}>{city.localName}</Option>))}
+                    </List>}
             </SearchBarContainer >
         </form>
     )

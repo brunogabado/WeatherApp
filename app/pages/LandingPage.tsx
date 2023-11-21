@@ -13,35 +13,16 @@ align-items: center;
 `
 const MainContent = styled.div`
 display:flex;
+flex-direction: column;
 align-items: center;
 justify-content: space-around;
 padding: 7% 0 7% 0;
-`
-const VideoContainer = styled.div`
-display: grid;
-grid-template-columns: 1fr 1fr;
-justify-items: center;
-width: 40%;
-overflow: hidden;
-border-radius: 7%;
-box-shadow: 25px 0 20px -20px rgba(0, 0, 0, 0.45), -25px 0 20px -20px rgba(0, 0, 0, 0.45);
-
-@media (max-width: 1000px){
-    grid-template-columns: 1fr;
-    width: 25%;
-    border-radius: 10px;
-    box-shadow: none;
-    }
-
-    @media (max-width: 600px){
-        display: none;
-    }
 `
 const InfoContainer = styled.div`
 display: flex;
 flex-direction: column;
 font-size: 160%;
-width: 40%;
+width: 700px;
 height: 80%;
 justify-items: center;
 
@@ -61,21 +42,23 @@ justify-items: center;
     width: 70%;
 }
 `
+const VideoContainer = styled.div`
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+width: 700px;
+margin-top: 50px
+`
 const ButtonContainer = styled.div`
 display: flex;
 height: auto;
 justify-content: center;
 `
-const DashboardContainer = styled.div`
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-width: 100%;
-background-color: #57a7d1;
-`
+
 const Video = styled.video`
-max-width: 100%;
+border-radius: 50%;
+flex-wrap: wrap;
+max-width: 150px;
 object-fit: contain;
 `
 const ButtonLog = styled.button`
@@ -100,8 +83,14 @@ transition: 0.7s ease;
     width: 170px;
 }
 `
-
-
+const DashboardContainer = styled.div`
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+width: 100%;
+background-color: #57a7d1;
+`
 
 const LandingPage: React.FC = () => {
 
@@ -123,7 +112,7 @@ const LandingPage: React.FC = () => {
     interface cityInfo {
         searchedName: string,
         localName: string,
-        coordinates: []
+        coordinates: number[]
     }
 
     type dashboardDataObj = {
@@ -134,8 +123,6 @@ const LandingPage: React.FC = () => {
         cityName: string;
     }
 
-
-
     //states
     const [weatherData, setWeatherData] = useState({
         temperaturesObj: {} as { [date: string]: number[] },
@@ -145,17 +132,16 @@ const LandingPage: React.FC = () => {
     });
 
     const [autoCompleteList, setAutoCompleteList] = useState<cityInfo[]>([])
-    const [coordinates, setCoordinates] = useState<{ lat: number; lon: number }>({ lat: 0, lon: 0 });
+    const [coordinates, setCoordinates] = useState<{ lat: number, lon: number }>({ lat: 0, lon: 0 });
     const [city, setCity] = useState<cityInfo>()
 
-    const searchCity = async (searchCity: string) => {
+    const searchCity = async (city: string) => {
         try {
             //Search cities by name to get a list to do an autocomplete.
-            const response2 = await axios.get(`https://api.maptiler.com/geocoding/${city}.json?key=PTLty8xCfargkFm295Ip&language=pt`)
-            console.log(response2.data.features)
-
+            const response = await axios.get(`https://api.maptiler.com/geocoding/${city}.json?key=PTLty8xCfargkFm295Ip&language=pt`)
+            console.log(response)
             //creating an array to store all the cities we received in the response.
-            const NewAutoCompleteList: cityInfo[] = response2.data.features.map((item: searchedCitiesInfo) => ({
+            const NewAutoCompleteList: cityInfo[] = response.data.features.map((item: searchedCitiesInfo) => ({
                 searchedName: item.text_pt,
                 localName: item.place_name,
                 coordinates: item.geometry.coordinates,
@@ -171,82 +157,94 @@ const LandingPage: React.FC = () => {
 
     }
 
-    const fetchData = async () => {
-        //requesting the data of 5 days forecast 
-        try {
-            const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=24&lon=0&appid=80d4983145654cecddf9da59eb27e822`)
+    useEffect(() => {
+        const fetchData = async () => {
+            //requesting the data of 5 days forecast 
+            try {
+                const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lon}&lon=${coordinates.lat}&appid=403a9c02b9a56c52b7c077f403577b67&units=metric`)
 
-            //objects with some arrays with the valeus for each day
-            const newTemperaturesObj: { [date: string]: number[] } = {};
-            const newIconsObj: { [date: string]: string[] } = {};
-            const newWindObj: { [date: string]: number[] } = {};
-            const newDashboardData: dashboardDataObj[] = []
 
-            //iterate over the response, over every list(3 in 3 hours) to get every value needed by day.
-            response.data.list.forEach((item: WeatherData) => {
-                const date = item.dt_txt.split(' ')[0];
-                const wind = item.wind.speed
-                const temperature = item.main.temp;
-                const icon = item.weather[0].icon
+                //objects with some arrays with the valeus for each day
+                const newTemperaturesObj: { [date: string]: number[] } = {};
+                const newIconsObj: { [date: string]: string[] } = {};
+                const newWindObj: { [date: string]: number[] } = {};
+                const newDashboardData: dashboardDataObj[] = []
 
-                //check if the day was already created, if it's not, create
-                if (!newTemperaturesObj[date]) {
-                    newTemperaturesObj[date] = [];
-                    newIconsObj[date] = []
-                    newWindObj[date] = []
-                }
-                //push the values of the list to the day's array
-                newTemperaturesObj[date].push(temperature);
-                newIconsObj[date].push(icon)
-                newWindObj[date].push(wind)
-            });
+                //iterate over the response, over every list(3 in 3 hours) to get every value needed by day.
+                response.data.list.forEach((item: WeatherData) => {
+                    const date = item.dt_txt.split(' ')[0];
+                    const wind = item.wind.speed
+                    const temperature = item.main.temp;
+                    const icon = item.weather[0].icon
 
-            //setting a new data's object to re-render
-
-            Object.keys(newTemperaturesObj).forEach((day) => {
-                const maxTemp = Math.max(...newTemperaturesObj[day]);
-                const minTemp = Math.min(...newTemperaturesObj[day]);
-                const maxWind = Math.max(...newWindObj[day]);
-                newDashboardData.push({
-                    wind: maxWind,
-                    maxTemp: maxTemp,
-                    minTemp: minTemp,
-                    date: day,
-                    cityName: city?.localName || 'Unknown City',
+                    //check if the day was already created, if it's not, create
+                    if (!newTemperaturesObj[date]) {
+                        newTemperaturesObj[date] = [];
+                        newIconsObj[date] = []
+                        newWindObj[date] = []
+                    }
+                    //push the values of the list to the day's array
+                    newTemperaturesObj[date].push(temperature);
+                    newIconsObj[date].push(icon)
+                    newWindObj[date].push(wind)
                 });
-            });
 
-            setWeatherData({
-                temperaturesObj: newTemperaturesObj,
-                windObj: newWindObj,
-                iconsObj: newIconsObj,
-                dashboardExtraData: newDashboardData
-            })
+                //setting a new data's object to re-render
 
-        }
-        catch (error) {
-            console.log(error)
-        }
-    };
+                Object.keys(newTemperaturesObj).forEach((day) => {
+                    const maxTemp = Math.max(...newTemperaturesObj[day]);
+                    const minTemp = Math.min(...newTemperaturesObj[day]);
+                    const maxWind = Math.max(...newWindObj[day]);
+                    newDashboardData.push({
+                        wind: maxWind,
+                        maxTemp: maxTemp,
+                        minTemp: minTemp,
+                        date: day,
+                        cityName: city?.localName || 'Unknown City',
+                    });
+                });
 
-    const selectList = (city: cityInfo) => {
+                setWeatherData({
+                    temperaturesObj: newTemperaturesObj,
+                    windObj: newWindObj,
+                    iconsObj: newIconsObj,
+                    dashboardExtraData: newDashboardData
+                })
+
+            }
+            catch (error) {
+                console.log(error)
+            }
+        };
+        fetchData()
+    }, [city]);
+
+    const selectCity = (city: cityInfo) => {
         setCity(city);
-        // setCoordinates({
-        //     lat: city.coordinates[0],
-        //     lon: city.coordinates[1]
-        // })
-
+        setCoordinates({
+            lat: city.coordinates[0],
+            lon: city.coordinates[1]
+        })
     }
 
-    console.log("weatherData: ", weatherData)
-    console.log("autoCompleteList: ", autoCompleteList)
-    console.log("city:  ", city)
-    console.log("rendering................................................")
+    // console.log("weatherData: ", weatherData)
+    // console.log("autoCompleteList: ", autoCompleteList)
+    // console.log("city:  ", city)
+    // console.log("Landing page rendering................................................")
 
     return (
         <>
             <Header />
             <MainContent>
+                <InfoContainer>
+                    <StyledTitle>Don't let unexpected weather disrupt your plans. Plan your life wisely with WeatherWise !</StyledTitle>
+                    <p>Create a list of cities, then easily compare them to your current location by logging in.</p>
+                    <ButtonContainer>
+                        <ButtonLog>Login</ButtonLog>
+                        <ButtonLog>Register</ButtonLog>
+                    </ButtonContainer>
+
+                </InfoContainer>
                 <VideoContainer>
                     <Video loop autoPlay muted>
                         <source src="\sun.mp4" type="video/mp4" />
@@ -261,18 +259,10 @@ const LandingPage: React.FC = () => {
                         <source src="\trovao.mp4" type="video/mp4" />
                     </Video>
                 </VideoContainer>
-                <InfoContainer>
-                    <StyledTitle>Don't let unexpected weather disrupt your plans. Plan your life wisely with WeatherWise !</StyledTitle>
-                    <p>Create a list of cities, then easily compare them to your current location by logging in.</p>
-                    <ButtonContainer>
-                        <ButtonLog onClick={fetchData}>Login</ButtonLog>
-                        <ButtonLog>Register</ButtonLog>
-                    </ButtonContainer>
-
-                </InfoContainer>
             </MainContent>
             <DashboardContainer>
-                <SearchBar autoCompleteList={autoCompleteList} searchCity={searchCity} />
+                
+                <SearchBar autoCompleteList={autoCompleteList} searchCity={searchCity} selectCity={selectCity} />
 
                 {city && Object.values(weatherData.temperaturesObj).map((value, index) => {
                     return <Dashboard key={index} temperaturesArr={value} iconsArr={Object.values(weatherData.iconsObj)[index]} dashboardData={weatherData.dashboardExtraData[index]} />

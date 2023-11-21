@@ -1,6 +1,9 @@
-"use client"
-
+import React, { useState } from 'react';
 import styled from "styled-components";
+
+interface NavbarProp {
+    extendNavbar: boolean
+}
 
 const HeaderContainer = styled.div`
 display: flex;
@@ -23,58 +26,82 @@ display: flex;
 font-family: 'Bebas Neue', sans-serif;
 align-items: center;
 `
-const Navbar = styled.div`
+const Navbar = styled.nav`
 display: flex;
-justify-content: space-between;
-gap: 5px;
-
-@media(max-width: 715px){
-    position: fixed;
-    left: -100%;
-    top:95px;
-    gap:0;
-    flex-direction: column;
-    text-align: center;
-    transition: 0.3s;
-    }
-
-    &.active {
-left:0;
-      }
+align-items: center;
+justify-content: center;
 `
-const NavbarButton = styled.button`
-font-size: 16px;
+const MobileNavbar = styled.div<NavbarProp>`
+display: flex;
+flex-direction: column;
+background-color: white;
+padding-top: 30px;
+gap: 15px;
+height: ${(props) => (props.extendNavbar ? "100vh" : "80px")}
+
+`
+const NavbarLink = styled.button`
+font-size: 20px;
 align-self: center;
-font-family: 'Bebas Neue', sans-serif;
-width: 100px;
+font-family: Arial, Helvetica, sans-serif;
+width: 120px;
 height: 40px;
 border: none;
 background: none;
 transition: 0.7s ease;
 
 &:hover {
-    color: white;
+    color: #57a7d1;
     font-size: 18px;
-}
+};
 
+@media(max-width: 715px){
+    display:none
+    
+    }
 `
-const BurgerMenu = styled.button`
-display: none;
-cursor: pointer;
-height: 50%;
+
+const MobielNavbarLink = styled.button`
+font-size: 20px;
 align-self: center;
+font-family: Arial, Helvetica, sans-serif;
+width: 120px;
+height: 40px;
+border: none;
+background: none;
+transition: 0.7s ease;
+
+&:hover {
+    color: #57a7d1;
+    font-size: 18px;
+};
+
+    `
+
+
+const BurgerMenu = styled.button`
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+height: 50px;
 background: none;
 border: none;
 
-@media(max-width: 715px){
-display:block
+@media(min-width: 715px) {
+    display: none
 
 }
 `
 const Header: React.FC = () => {
+
+    const [extendNavbar, setExtendeNavbar] = useState<boolean>(false)
+
+
     return (
         <>
             <HeaderContainer>
+
                 <LogoContainer>
                     <svg width="90px" height="90px" viewBox="0 0 1024 1024"
                         version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -84,27 +111,37 @@ const Header: React.FC = () => {
                     <StyledTitleLogo>WeatherWise</StyledTitleLogo>
                 </LogoContainer>
                 <Navbar>
-                    <NavbarButton>Home</NavbarButton>
-                    <NavbarButton>My Profile</NavbarButton>
-                    <NavbarButton>Login</NavbarButton>
-                </Navbar>
-                <BurgerMenu><svg fill="#000000" height="60%" width="60%" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 297.001 297.001">
-                    <g>
-                        <g>
+                    <NavbarLink>Home</NavbarLink>
+                    <NavbarLink>My Profile</NavbarLink>
+                    <NavbarLink>Login</NavbarLink>
+                    <BurgerMenu onClick={() => { setExtendeNavbar((curr) => !curr) }}>
+                        {extendNavbar ? <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z" fill="#0F0F0F" />
+                        </svg> : <svg fill="#000000" height="60%" width="60%" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 297.001 297.001">
                             <g>
-                                <path d="M273.736,0.001H23.264C10.436,0.001,0,10.436,0,23.264v23.789C0,59.88,10.436,70.316,23.264,70.316h250.473
+                                <g>
+                                    <g>
+                                        <path d="M273.736,0.001H23.264C10.436,0.001,0,10.436,0,23.264v23.789C0,59.88,10.436,70.316,23.264,70.316h250.473
 				c12.827,0,23.264-10.435,23.264-23.263V23.264C297,10.436,286.564,0.001,273.736,0.001z"/>
-                                <path d="M273.736,113.344H23.264C10.436,113.344,0,123.779,0,136.605v23.789c0,12.827,10.436,23.263,23.264,23.263h250.473
+                                        <path d="M273.736,113.344H23.264C10.436,113.344,0,123.779,0,136.605v23.789c0,12.827,10.436,23.263,23.264,23.263h250.473
 				c12.827,0,23.264-10.435,23.264-23.263v-23.789C297,123.779,286.564,113.344,273.736,113.344z"/>
-                                <path d="M273.736,226.686H23.264C10.436,226.686,0,237.121,0,249.949v23.789C0,286.565,10.436,297,23.264,297h250.473
+                                        <path d="M273.736,226.686H23.264C10.436,226.686,0,237.121,0,249.949v23.789C0,286.565,10.436,297,23.264,297h250.473
 				C286.564,297,297,286.565,297,273.737v-23.789C297,237.121,286.564,226.686,273.736,226.686z"/>
+                                    </g>
+                                </g>
                             </g>
-                        </g>
-                    </g>
-                </svg></BurgerMenu>
+                        </svg>}
+                    </BurgerMenu>
+                </Navbar>
 
             </HeaderContainer>
+            {extendNavbar &&
+                <MobileNavbar extendNavbar={extendNavbar}>
+                    <MobielNavbarLink>Home</MobielNavbarLink>
+                    <MobielNavbarLink>My Profile</MobielNavbarLink>
+                    <MobielNavbarLink>Login</MobielNavbarLink>
+                </MobileNavbar>}
         </>
     )
 }

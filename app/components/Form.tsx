@@ -55,7 +55,7 @@ margin-bottom: 15px;
 `
 
 const CloseButton = styled.button`
-position absolute;
+position: absolute;
 border: none;
 background: none;
 padding: 0;
@@ -66,7 +66,7 @@ margin: 10px;
 
 const RegisterForm: React.FC<ModalProps> = ({ typeOfForm }) => {
 
-    
+
 
     return (
         <>

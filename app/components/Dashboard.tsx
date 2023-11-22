@@ -75,14 +75,14 @@ const MaxTempSection = styled.div`
 display: flex;
 justify-content: center;
 width: 50px;
-background-color: #ff4d00;
+background-color: #FF9B50;
 border-radius: 50%
 `
 const MinTempSection = styled.div`
 display: flex;
 justify-content: center;
 width: 50px;
-background-color: #687EFF;
+background-color: #A6F6FF;
 border-radius: 50%
 `
 const MaxWindSection = styled.div`

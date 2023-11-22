@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 import Header from "../components/Header";
@@ -36,8 +38,9 @@ type dashboardDataObj = {
 }
 
 
+
 const StyledTitle = styled.h1`
-diplay: flex;
+display: flex;
 align-items: center;
   margin: 0;
 `
@@ -51,9 +54,9 @@ background-color: #D8F2FF;
 z-index: 10;
 position: relative;
 
-background: url('580b585b2edbce24c47b263e.png') 95% 10%/cover no-repeat,
-url('580b585b2edbce24c47b263e.png') 85% 90%/cover no-repeat,
-url('580b585b2edbce24c47b263e.png') left center/cover no-repeat,
+background: url('cloud.png') 95% 10%/cover no-repeat,
+url('cloud.png') 85% 90%/cover no-repeat,
+url('cloud.png') left center/cover no-repeat,
 linear-gradient(rgba(216, 242, 255, 0.8), rgba(216, 242, 255, 0.8));
 
 background-size: 20%;
@@ -144,7 +147,6 @@ const LandingPage: React.FC = () => {
         try {
             //Search cities by name to get a list to do an autocomplete.
             const response = await axios.get(`https://api.maptiler.com/geocoding/${city}.json?key=PTLty8xCfargkFm295Ip&language=pt`)
-console.log("requested !")
 
             //creating an array to store all the cities we received in the response.
             const NewAutoCompleteList: cityInfo[] = response.data.features.map((item: searchedCitiesInfo) => ({
@@ -165,10 +167,9 @@ console.log("requested !")
 
     useEffect(() => {
         const fetchData = async () => {
-            //requesting the data of 5 days forecast 
             try {
                 const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lon}&lon=${coordinates.lat}&appid=403a9c02b9a56c52b7c077f403577b67&units=metric`)
-                console.log(response)
+                console.log("requested!!")
 
                 //objects with some arrays with the valeus for each day
                 const newTemperaturesObj: { [date: string]: number[] } = {};
@@ -235,6 +236,7 @@ console.log("requested !")
         })
     }
 
+    console.log("weather data:", weatherData)
 
     return (
         <>

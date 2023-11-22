@@ -244,6 +244,15 @@ const LandingPage: React.FC = () => {
         })
     }
 
+    const onClickLogin = () => {
+        setOpenModal(true)
+        setTypeOfForm("login")
+    }
+
+    const onClickRegister = () => {
+        setOpenModal(true)
+        setTypeOfForm("register")
+    }
 
     return (
         <>
@@ -253,8 +262,8 @@ const LandingPage: React.FC = () => {
                     <StyledTitle>Don't let unexpected weather disrupt your plans. Plan your life wisely with WeatherWise !</StyledTitle>
                     <p>Create a list of cities, then easily compare them to your current location by logging in.</p>
                     <ButtonContainer>
-                        <ButtonLog>Login</ButtonLog>
-                        <ButtonLog>Register</ButtonLog>
+                        <ButtonLog onClick={onClickLogin}>Login</ButtonLog>
+                        <ButtonLog onClick={onClickRegister}>Register</ButtonLog>
                     </ButtonContainer>
                 </InfoContainer>
             </MainContent>

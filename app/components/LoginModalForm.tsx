@@ -1,9 +1,46 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { LogoContainer, ModalProps } from './Header';
-import { FormContainer, CloseButton, FormStyledTitleLogo, FormInput, LinkLabel, Link, SubmitButton } from './RegisterModalForm';
+import { FormContainer, CloseButton, FormStyledTitleLogo, FormInput, LinkLabel, Link, SubmitButton, ErrorMessage, SuccessMessage } from './RegisterModalForm';
 
 
 const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [submitRequest, setSubmitRequest] = useState({ isLoading: false, submitted: false, error: false, errorMessage: "" });
+
+
+
+    const onLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        try {
+            e.preventDefault()
+            setSubmitRequest((prevSubmitRequest) => ({ ...prevSubmitRequest, isLoading: true, }));
+
+            const loginResponse = await axios.post("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/login", { email, password })
+            console.log(loginResponse)
+            //store the token in the cookie(loginResponse.data.authToken)
+            const userInfo = await axios.get("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/me", {
+                headers: {
+                    Authorization: "Bearer " + loginResponse.data.authToken
+                }
+            })
+            console.log(userInfo)
+            console.log(loginResponse)
+            //store info in the cookie
+            setSubmitRequest({ error: false, isLoading: false, submitted: true, errorMessage: "" });
+            setTimeout(() => {
+                setSubmitRequest((prevSubmitRequest) => ({
+                    ...prevSubmitRequest,
+                    submitted: false,
+                }));
+            }, 4000);
+        } catch (err: any) {
+            console.log("error on login submit: ", err)
+            setSubmitRequest({ error: true, isLoading: false, submitted: true, errorMessage: err.response.data.message });
+        }
+    }
+
 
     return (
         <>
@@ -34,8 +71,13 @@ const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
                     </svg>
                     <FormStyledTitleLogo>WeatherWise</FormStyledTitleLogo>
                 </LogoContainer>
-                <FormInput placeholder='email' />
-                <FormInput placeholder='password' />
+
+                {submitRequest.error && <ErrorMessage>{submitRequest.errorMessage}</ErrorMessage>}
+                {!submitRequest.error && submitRequest.submitted && <SuccessMessage>Account created!</SuccessMessage>}
+                {submitRequest.isLoading && <p>Loading..</p>}
+
+                <FormInput placeholder='email' onChange={(e) => setEmail(e.target.value)} />
+                <FormInput placeholder='password' onChange={(e) => setPassword(e.target.value)} />
 
                 <LinkLabel>Don't have an account?</LinkLabel>
                 <Link onClick={() => setTypeOfForm("register")} > SIGN UP</Link>

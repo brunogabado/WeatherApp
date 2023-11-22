@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from "axios";
 import styled from "styled-components";
 import { LogoContainer, ModalProps } from './Header';
 
@@ -9,7 +10,7 @@ align-items: center;
 border: none;
 background-color: white;
 overflow: hidden;
-gap: 5px;
+gap: 10px;
 `
 export const FormInput = styled.input`
 display: flex;
@@ -61,14 +62,56 @@ align-self: end;
 margin: 10px;
 
 `
+export const ErrorMessage = styled.p`
+color: red;
+`
+export const SuccessMessage = styled.p`
+color: green;
+`
+
 
 const RegisterForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [submitRequest, setSubmitRequest] = useState({ isLoading: false, submitted: false, error: false, errorMessage: "" });
+
+
+    const onRegistSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        try {
+            e.preventDefault()
+            setSubmitRequest((prevSubmitRequest) => ({ ...prevSubmitRequest, isLoading: true, }));
+
+            const registResponse = await axios.post("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/signup", { name, email, password })
+            console.log(registResponse)
+            //store the token in the cookie(loginResponse.data.authToken)
+            const userInfo = await axios.get("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/me", {
+                headers: {
+                    Authorization: "Bearer " + registResponse.data.authToken
+                }
+            })
+            console.log(userInfo)
+            console.log(registResponse)
+            //store info in the cookie
+            setSubmitRequest({ error: false, isLoading: false, submitted: true, errorMessage: "" });
+            setTimeout(() => {
+                setSubmitRequest((prevSubmitRequest) => ({
+                    ...prevSubmitRequest,
+                    submitted: false,
+                }));
+            }, 4000);
+        } catch (err: any) {
+            console.log("error on regist submit: ", err)
+            setSubmitRequest({ error: true, isLoading: false, submitted: true, errorMessage: err.response.data.message });
+        }
+    }
+
 
     return (
         <>
-            <FormContainer>
+            <FormContainer onSubmit={(event) => onRegistSubmit(event)}>
                 <CloseButton onClick={() => setOpenModal(false)}>
-                    <svg width="20px" height="20px" viewBox="0 -0.5 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                    <svg width="30px" height="30px" viewBox="0 -0.5 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                         <title>close_mini [#1522]</title>
                         <desc>Created with Sketch.</desc>
                         <defs>
@@ -92,15 +135,19 @@ const RegisterForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => 
                     </svg>
                     <FormStyledTitleLogo>WeatherWise</FormStyledTitleLogo>
                 </LogoContainer>
-                <FormInput placeholder='email' />
-                <FormInput placeholder='username' />
-                <FormInput placeholder='password' />
-                <FormInput placeholder='password' />
+
+                {submitRequest.error && <ErrorMessage>{submitRequest.errorMessage}</ErrorMessage>}
+                {!submitRequest.error && submitRequest.submitted && <SuccessMessage>Account created!</SuccessMessage>}
+                {submitRequest.isLoading && <p>Loading..</p>}
+
+                <FormInput placeholder='email' onChange={(e) => setEmail(e.target.value)} />
+                <FormInput placeholder='username' onChange={(e) => setName(e.target.value)} />
+                <FormInput placeholder='password' onChange={(e) => setPassword(e.target.value)} />
 
                 <LinkLabel>Do you have an account?</LinkLabel>
                 <Link onClick={() => setTypeOfForm("login")}>LOGIN</Link>
 
-                <SubmitButton>LOGIN</SubmitButton>
+                <SubmitButton type='submit'>Regist</SubmitButton>
             </FormContainer >
         </>
     )

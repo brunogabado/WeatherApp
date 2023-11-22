@@ -1,78 +1,15 @@
 import React, { useState } from 'react';
-import styled from "styled-components";
-import { LogoContainer, StyledTitleLogo } from './Header';
-import { type } from 'os';
-import { ModalProps } from './ModalForm';
-
-const Form = styled.form`
-display: flex;
-flex-direction: column;
-align-items: center;
-border: none;
-background-color: white;
-overflow: hidden;
-gap: 5px;
-`
-
-const FormInput = styled.input`
-display: flex;
-align-items: center;
-text-align: center;
-height: 35px;
-width: 250px;
-background-color: #ececec;
-border: none;
-border-radius: 5px;
-margin: 8px 0;
-padding: 2px;
-`
-
-const SubmitButton = styled.button`
-color: white;
-height: 40px;
-width: 100%;
-align-self: end;
-border: none;
-background-color: #57a7d1;
-background-size: cover;
-padding: 0;
-`
-
-const FormStyledTitleLogo = styled(StyledTitleLogo)`
-font-size: 22px;
-margin-top: 32px;
-`
-
-const LinkLabel = styled.p`
-
-margin: 15px 0 0 0;
-`
-
-const Link = styled.a`
-color: #57a7d1;
-font-weight: 600;
-margin-bottom: 15px;
-`
-
-const CloseButton = styled.button`
-position: absolute;
-border: none;
-background: none;
-padding: 0;
-align-self: end;
-margin: 10px;
-`
+import { LogoContainer, ModalProps } from './Header';
+import { FormContainer, CloseButton, FormStyledTitleLogo, FormInput, LinkLabel, Link, SubmitButton } from './RegisterModalForm';
 
 
-const RegisterForm: React.FC<ModalProps> = ({ typeOfForm }) => {
-
-
+const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
 
     return (
         <>
 
-            <Form>
-                <CloseButton>
+            <FormContainer>
+                <CloseButton onClick={() => setOpenModal(false)}>
                     <svg width="20px" height="20px" viewBox="0 -0.5 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                         <title>close_mini [#1522]</title>
                         <desc>Created with Sketch.</desc>
@@ -98,22 +35,16 @@ const RegisterForm: React.FC<ModalProps> = ({ typeOfForm }) => {
                     <FormStyledTitleLogo>WeatherWise</FormStyledTitleLogo>
                 </LogoContainer>
                 <FormInput placeholder='email' />
-                {typeOfForm === 'register' &&
-                    <>
-                        <FormInput placeholder='username' />
-                        <FormInput placeholder='password' />
-                    </>
-                }
                 <FormInput placeholder='password' />
 
                 <LinkLabel>Don't have an account?</LinkLabel>
-                <Link>SIGN UP</Link>
+                <Link onClick={() => setTypeOfForm("register")} > SIGN UP</Link>
 
                 <SubmitButton>LOGIN</SubmitButton>
-            </Form >
+            </FormContainer >
 
         </>
     )
 }
 
-export default RegisterForm
+export default LoginForm

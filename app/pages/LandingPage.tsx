@@ -7,6 +7,10 @@ import Footer from "../components/Footer";
 import Dashboard from "../components/Dashboard";
 import axios from "axios";
 import SearchBar from '../components/SearchBar';
+import Modal from '../components/Modal';
+import RegisterForm from '../components/RegisterModalForm';
+import LoginForm from '../components/LoginModalForm';
+
 
 interface WeatherData {
     dt_txt: string;
@@ -38,7 +42,6 @@ type dashboardDataObj = {
 }
 
 
-
 const StyledTitle = styled.h1`
 display: flex;
 align-items: center;
@@ -51,7 +54,7 @@ align-items: center;
 justify-content: space-around;
 padding: 7% 0 7% 0;
 background-color: #D8F2FF;
-z-index: 10;
+z-index: 2;
 position: relative;
 
 background: url('cloud.png') 95% 10%/cover no-repeat,
@@ -138,9 +141,14 @@ const LandingPage: React.FC = () => {
         dashboardExtraData: [] as dashboardDataObj[]
     });
 
+    //states of the dashboard
     const [autoCompleteList, setAutoCompleteList] = useState<cityInfo[]>([])
     const [coordinates, setCoordinates] = useState<{ lat: number, lon: number }>({ lat: 0, lon: 0 });
     const [city, setCity] = useState<cityInfo>()
+
+    //states oF Modal forms
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [typeOfForm, setTypeOfForm] = useState<string>("login")
 
     //function to get the autocomplete options
     const searchCity = async (city: string) => {
@@ -236,21 +244,18 @@ const LandingPage: React.FC = () => {
         })
     }
 
-    console.log("weather data:", weatherData)
 
     return (
         <>
-            <Header />
+            <Header setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} />
             <MainContent>
                 <InfoContainer>
-                    {/* <img src='580b585b2edbce24c47b263e.png' /> */}
                     <StyledTitle>Don't let unexpected weather disrupt your plans. Plan your life wisely with WeatherWise !</StyledTitle>
                     <p>Create a list of cities, then easily compare them to your current location by logging in.</p>
                     <ButtonContainer>
                         <ButtonLog>Login</ButtonLog>
                         <ButtonLog>Register</ButtonLog>
                     </ButtonContainer>
-
                 </InfoContainer>
             </MainContent>
             <DashboardContainer>
@@ -263,6 +268,12 @@ const LandingPage: React.FC = () => {
 
             </DashboardContainer>
             <Footer />
+
+            {openModal && (
+                <Modal setOpenModal={setOpenModal} >
+                    {typeOfForm === 'login' ? <LoginForm setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} /> : <RegisterForm setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} />}
+                </Modal>
+            )}
         </>
     );
 };

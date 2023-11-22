@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
-import Form from './Form';
+
 
 
 const ModalContainer = styled.div`
@@ -12,11 +12,12 @@ const ModalContainer = styled.div`
   width: 100%;
   top: 0;
   background-color: rgba(41, 39, 39, 0.95);
-  z-index: 11;
+  z-index: 3;
 `;
 
 const ModalCard = styled.div`
   border: none;
+  z-index: 12;
   border-radius: 15px;
   background-color: white;
   position: absolute;
@@ -29,17 +30,22 @@ const ModalCard = styled.div`
   transform: translate(-50%, -50%);
 `
 
-export interface ModalProps {
-    typeOfForm: string
+interface ModalProps {
+    setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
+    children: React.ReactNode
 }
 
-const Modal: React.FC<ModalProps> = ({ typeOfForm }) => {
+const Modal: React.FC<ModalProps> = ({ setOpenModal, children }) => {
+
+    const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+    };
 
     return (
         <>
-            <ModalContainer>
-                <ModalCard>
-                    <Form typeOfForm={typeOfForm} />
+            <ModalContainer onClick={() => setOpenModal(false)}>
+                <ModalCard onClick={stopPropagation}>
+                    {children}
                 </ModalCard>
             </ModalContainer>
         </>

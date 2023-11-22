@@ -1,6 +1,6 @@
 
 import { LandingPage } from "./pages/LandingPage";
-import Modal from "./components/ModalForm";
+import Modal from "./components/Modal";
 
 
 export default function Home() {

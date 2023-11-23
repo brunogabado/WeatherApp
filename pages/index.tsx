@@ -1,15 +1,13 @@
+
+
 "use client"
 
 import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Dashboard from "../components/Dashboard";
 import axios from "axios";
 import SearchBar from '../components/SearchBar';
-import Modal from '../components/Modal';
-import RegisterForm from '../components/RegisterModalForm';
-import LoginForm from '../components/LoginModalForm';
+import Modal from "../components/Modal";
 
 
 interface WeatherData {
@@ -40,6 +38,7 @@ type dashboardDataObj = {
     date: string;
     cityName: string;
 }
+
 
 
 const StyledTitle = styled.h1`
@@ -130,8 +129,10 @@ const SearchTitle = styled.h3`
 margin: 0;
 `
 
-const LandingPage: React.FC = () => {
+const HomePage: React.FC = () => {
 
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [typeOfForm, setTypeOfForm] = useState<string>("login")
 
     //states
     const [weatherData, setWeatherData] = useState({
@@ -147,8 +148,6 @@ const LandingPage: React.FC = () => {
     const [city, setCity] = useState<cityInfo>()
 
     //states oF Modal forms
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [typeOfForm, setTypeOfForm] = useState<string>("login")
 
     //function to get the autocomplete options
     const searchCity = async (city: string) => {
@@ -256,7 +255,7 @@ const LandingPage: React.FC = () => {
 
     return (
         <>
-            <Header setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} />
+            {/* <Header setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} /> */}
             <MainContent>
                 <InfoContainer>
                     <StyledTitle>Don't let unexpected weather disrupt your plans. Plan your life wisely with WeatherWise !</StyledTitle>
@@ -276,17 +275,18 @@ const LandingPage: React.FC = () => {
                 })}
 
             </DashboardContainer>
-            <Footer />
 
             {openModal && (
-                <Modal setOpenModal={setOpenModal} >
-                    {typeOfForm === 'login' ? <LoginForm setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} /> : <RegisterForm setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} />}
-                </Modal>
+                <Modal setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} typeOfForm={typeOfForm} />
             )}
+
+
         </>
     );
 };
 
-export { LandingPage, StyledTitle };
+export default HomePage;
+
+
 
 

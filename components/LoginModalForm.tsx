@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+
 import { LogoContainer, ModalProps } from './Header';
 import { FormContainer, CloseButton, FormStyledTitleLogo, FormInput, LinkLabel, Link, SubmitButton, ErrorMessage, SuccessMessage } from './RegisterModalForm';
 
@@ -9,9 +10,8 @@ const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [submitRequest, setSubmitRequest] = useState({ isLoading: false, submitted: false, error: false, errorMessage: "" });
-
-
-
+ 
+    
     const onLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault()
@@ -35,6 +35,7 @@ const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
                     submitted: false,
                 }));
             }, 4000);
+
         } catch (err: any) {
             console.log("error on login submit: ", err)
             setSubmitRequest({ error: true, isLoading: false, submitted: true, errorMessage: err.response.data.message });
@@ -45,7 +46,7 @@ const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
     return (
         <>
 
-            <FormContainer>
+            <FormContainer onSubmit={(e) => onLoginSubmit(e)}>
                 <CloseButton onClick={() => setOpenModal(false)}>
                     <svg width="20px" height="20px" viewBox="0 -0.5 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                         <title>close_mini [#1522]</title>
@@ -82,7 +83,7 @@ const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
                 <LinkLabel>Don't have an account?</LinkLabel>
                 <Link onClick={() => setTypeOfForm("register")} > SIGN UP</Link>
 
-                <SubmitButton>LOGIN</SubmitButton>
+                <SubmitButton type='submit'>LOGIN</SubmitButton>
             </FormContainer >
 
         </>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
-
-
+import LoginForm from "./LoginModalForm";
+import RegisterForm from "./RegisterModalForm";
 
 const ModalContainer = styled.div`
   display: flex;
@@ -32,10 +32,11 @@ const ModalCard = styled.div`
 
 interface ModalProps {
     setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-    children: React.ReactNode
+    setTypeOfForm: React.Dispatch<React.SetStateAction<string>>
+    typeOfForm: string
 }
 
-const Modal: React.FC<ModalProps> = ({ setOpenModal, children }) => {
+const Modal: React.FC<ModalProps> = ({ setOpenModal, typeOfForm, setTypeOfForm }) => {
 
     const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
@@ -45,7 +46,7 @@ const Modal: React.FC<ModalProps> = ({ setOpenModal, children }) => {
         <>
             <ModalContainer onClick={() => setOpenModal(false)}>
                 <ModalCard onClick={stopPropagation}>
-                    {children}
+                    {typeOfForm === 'login' ? <LoginForm setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} /> : <RegisterForm setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} />}
                 </ModalCard>
             </ModalContainer>
         </>

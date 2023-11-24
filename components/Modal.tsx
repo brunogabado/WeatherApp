@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
 import styled from "styled-components";
 import LoginForm from "./LoginModalForm";
 import RegisterForm from "./RegisterModalForm";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/state/store';
+import { closeModal } from '@/state/modal/modalSlice';
+
 
 const ModalContainer = styled.div`
   display: flex;
@@ -30,13 +33,10 @@ const ModalCard = styled.div`
   transform: translate(-50%, -50%);
 `
 
-interface ModalProps {
-    setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-    setTypeOfForm: React.Dispatch<React.SetStateAction<string>>
-    typeOfForm: string
-}
+const Modal: React.FC = () => {
 
-const Modal: React.FC<ModalProps> = ({ setOpenModal, typeOfForm, setTypeOfForm }) => {
+    const dispatch = useDispatch()
+    const typeForm = useSelector((state: RootState) => state.modal.type)
 
     const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
@@ -44,9 +44,9 @@ const Modal: React.FC<ModalProps> = ({ setOpenModal, typeOfForm, setTypeOfForm }
 
     return (
         <>
-            <ModalContainer onClick={() => setOpenModal(false)}>
+            <ModalContainer onClick={() => dispatch(closeModal())}>
                 <ModalCard onClick={stopPropagation}>
-                    {typeOfForm === 'login' ? <LoginForm setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} /> : <RegisterForm setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} />}
+                    {typeForm === 'login' ? <LoginForm /> : <RegisterForm />}
                 </ModalCard>
             </ModalContainer>
         </>

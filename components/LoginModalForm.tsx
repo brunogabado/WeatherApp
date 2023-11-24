@@ -1,32 +1,36 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
-import { LogoContainer, ModalProps } from './Header';
+import { useRouter } from 'next/router';
+import { getCookies, setCookie, deleteCookie, getCookie } from 'cookies-next';
+import { LogoContainer } from './Header';
 import { FormContainer, CloseButton, FormStyledTitleLogo, FormInput, LinkLabel, Link, SubmitButton, ErrorMessage, SuccessMessage } from './RegisterModalForm';
+import { useDispatch } from 'react-redux';
+import { closeModal, registerType } from '@/state/modal/modalSlice';
 
 
-const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
+const LoginForm: React.FC = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [submitRequest, setSubmitRequest] = useState({ isLoading: false, submitted: false, error: false, errorMessage: "" });
- 
-    
+
+    const dispatch = useDispatch()
+    const router = useRouter()
+
     const onLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault()
             setSubmitRequest((prevSubmitRequest) => ({ ...prevSubmitRequest, isLoading: true, }));
 
             const loginResponse = await axios.post("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/login", { email, password })
-            console.log(loginResponse)
             //store the token in the cookie(loginResponse.data.authToken)
             const userInfo = await axios.get("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/me", {
                 headers: {
                     Authorization: "Bearer " + loginResponse.data.authToken
                 }
             })
-            console.log(userInfo)
-            console.log(loginResponse)
+            console.log("userInfo", userInfo)
+            console.log("loginResponse", loginResponse)
             //store info in the cookie
             setSubmitRequest({ error: false, isLoading: false, submitted: true, errorMessage: "" });
             setTimeout(() => {
@@ -35,7 +39,9 @@ const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
                     submitted: false,
                 }));
             }, 4000);
-
+            setCookie('userToken', loginResponse.data.authToken);
+            setCookie('userData', JSON.stringify(userInfo.data));
+            router.push('/Profile');
         } catch (err: any) {
             console.log("error on login submit: ", err)
             setSubmitRequest({ error: true, isLoading: false, submitted: true, errorMessage: err.response.data.message });
@@ -47,14 +53,14 @@ const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
         <>
 
             <FormContainer onSubmit={(e) => onLoginSubmit(e)}>
-                <CloseButton onClick={() => setOpenModal(false)}>
+                <CloseButton onClick={() => dispatch(closeModal())}>
                     <svg width="20px" height="20px" viewBox="0 -0.5 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                         <title>close_mini [#1522]</title>
                         <desc>Created with Sketch.</desc>
                         <defs>
 
                         </defs>
-                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                             <g id="Dribbble-Light-Preview" transform="translate(-385.000000, -206.000000)" fill="#000000">
                                 <g id="icons" transform="translate(56.000000, 160.000000)">
                                     <polygon id="close_mini-[#1522]" points="334.6 49.5 337 51.6 335.4 53 333 50.9 330.6 53 329 51.6 331.4 49.5 329 47.4 330.6 46 333 48.1 335.4 46 337 47.4">
@@ -81,7 +87,7 @@ const LoginForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
                 <FormInput placeholder='password' onChange={(e) => setPassword(e.target.value)} />
 
                 <LinkLabel>Don't have an account?</LinkLabel>
-                <Link onClick={() => setTypeOfForm("register")} > SIGN UP</Link>
+                <Link onClick={() => dispatch(registerType())} > SIGN UP</Link>
 
                 <SubmitButton type='submit'>LOGIN</SubmitButton>
             </FormContainer >

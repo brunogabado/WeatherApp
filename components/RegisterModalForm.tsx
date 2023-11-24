@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from "axios";
 import styled from "styled-components";
-import { LogoContainer, ModalProps } from './Header';
+import { LogoContainer } from './Header';
+import { useDispatch } from 'react-redux';
+import { closeModal, loginType } from '@/state/modal/modalSlice';
 
 export const FormContainer = styled.form`
 display: flex;
@@ -70,11 +72,13 @@ color: green;
 `
 
 
-const RegisterForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
+const RegisterForm: React.FC = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [submitRequest, setSubmitRequest] = useState({ isLoading: false, submitted: false, error: false, errorMessage: "" });
+
+    const dispatch = useDispatch()
 
 
     const onRegistSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -110,14 +114,14 @@ const RegisterForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => 
     return (
         <>
             <FormContainer onSubmit={(event) => onRegistSubmit(event)}>
-                <CloseButton onClick={() => setOpenModal(false)}>
+                <CloseButton onClick={() => dispatch(closeModal())}>
                     <svg width="30px" height="30px" viewBox="0 -0.5 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                         <title>close_mini [#1522]</title>
                         <desc>Created with Sketch.</desc>
                         <defs>
 
                         </defs>
-                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                             <g id="Dribbble-Light-Preview" transform="translate(-385.000000, -206.000000)" fill="#000000">
                                 <g id="icons" transform="translate(56.000000, 160.000000)">
                                     <polygon id="close_mini-[#1522]" points="334.6 49.5 337 51.6 335.4 53 333 50.9 330.6 53 329 51.6 331.4 49.5 329 47.4 330.6 46 333 48.1 335.4 46 337 47.4">
@@ -145,7 +149,7 @@ const RegisterForm: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => 
                 <FormInput placeholder='password' onChange={(e) => setPassword(e.target.value)} />
 
                 <LinkLabel>Do you have an account?</LinkLabel>
-                <Link onClick={() => setTypeOfForm("login")}>LOGIN</Link>
+                <Link onClick={() => dispatch(loginType())}>LOGIN</Link>
 
                 <SubmitButton type='submit'>Regist</SubmitButton>
             </FormContainer >

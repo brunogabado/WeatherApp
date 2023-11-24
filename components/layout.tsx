@@ -1,19 +1,17 @@
 
-
-
 import Footer from './Footer'
 import Header from './Header'
 
+
 interface LayoutProps {
     children: React.ReactNode
-    setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-    setTypeOfForm: React.Dispatch<React.SetStateAction<string>>
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, setOpenModal, setTypeOfForm }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+
     return (
         <>
-            <Header setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} />
+            <Header />
             <main>{children}</main>
             <Footer />
         </>

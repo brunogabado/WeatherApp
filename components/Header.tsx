@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
+import { useDispatch } from 'react-redux'
+import { loginType, openModal } from '@/state/modal/modalSlice';
+
 
 interface NavbarProp {
     extendNavbar: boolean
@@ -90,19 +93,15 @@ border: none;
 }
 `
 
-export interface ModalProps {
-    setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-    setTypeOfForm: React.Dispatch<React.SetStateAction<string>>
-}
-
-const Header: React.FC<ModalProps> = ({ setOpenModal, setTypeOfForm }) => {
+const Header: React.FC = () => {
 
     const [extendNavbar, setExtendNavbar] = useState<boolean>(false)
+    const dispatch = useDispatch()
 
     const handleLoginClick = () => {
         setExtendNavbar(false)
-        setTypeOfForm('login')
-        setOpenModal(true)
+        dispatch(loginType())
+        dispatch(openModal())
     }
 
     return (

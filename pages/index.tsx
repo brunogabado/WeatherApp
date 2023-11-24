@@ -1,13 +1,12 @@
-
-
-"use client"
-
 import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 import Dashboard from "../components/Dashboard";
 import axios from "axios";
 import SearchBar from '../components/SearchBar';
 import Modal from "../components/Modal";
+import { useDispatch, useSelector } from 'react-redux';
+import { closeModal, loginType, openModal, registerType } from '@/state/modal/modalSlice';
+import { RootState } from '@/state/store';
 
 
 interface WeatherData {
@@ -131,8 +130,10 @@ margin: 0;
 
 const HomePage: React.FC = () => {
 
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [typeOfForm, setTypeOfForm] = useState<string>("login")
+    //redux actions
+    const dispatch = useDispatch()
+    //redux state
+    const isOpen = useSelector((state: RootState) => state.modal.isOpen)
 
     //states
     const [weatherData, setWeatherData] = useState({
@@ -146,8 +147,6 @@ const HomePage: React.FC = () => {
     const [autoCompleteList, setAutoCompleteList] = useState<cityInfo[]>([])
     const [coordinates, setCoordinates] = useState<{ lat: number, lon: number }>({ lat: 0, lon: 0 });
     const [city, setCity] = useState<cityInfo>()
-
-    //states oF Modal forms
 
     //function to get the autocomplete options
     const searchCity = async (city: string) => {
@@ -244,13 +243,13 @@ const HomePage: React.FC = () => {
     }
 
     const onClickLogin = () => {
-        setOpenModal(true)
-        setTypeOfForm("login")
+        dispatch(openModal())
+        dispatch(loginType())
     }
 
     const onClickRegister = () => {
-        setOpenModal(true)
-        setTypeOfForm("register")
+        dispatch(closeModal())
+        dispatch(registerType())
     }
 
     return (
@@ -276,10 +275,9 @@ const HomePage: React.FC = () => {
 
             </DashboardContainer>
 
-            {openModal && (
-                <Modal setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} typeOfForm={typeOfForm} />
+            {isOpen && (
+                <Modal />
             )}
-
 
         </>
     );

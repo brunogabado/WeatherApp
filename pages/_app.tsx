@@ -10,7 +10,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     return (<>
         <GlobalStyles />
         <Provider store={store}>
-            <Head><title>WeatherWise</title></Head>
+            <Head>
+                <title>WeatherWise</title>
+                <link rel="icon" href="favicon.ico" />
+            </Head>
             <Layout >
                 <Component {...pageProps} />
             </Layout>

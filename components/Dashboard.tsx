@@ -19,11 +19,7 @@ animation: slidein 1s ease-in-out;
     }
   }
 
-  @media (max-width: 550px) {
-    width: 350px;
-  }
 `
-
 const DashboardTable = styled.div`
 display: flex;
 flex-direction: column;
@@ -37,7 +33,6 @@ background: linear-gradient(180deg, rgba(87,167,209,1) 1%, rgba(255,255,255,1) 1
     border-radius: 20px 0 20px 20px;
 }
 `
-
 const DashboardSidebar = styled.div`
 display: flex;
 flex-direction: column;
@@ -53,10 +48,8 @@ border-radius:0 20px 20px 0;
    
 }
 `
-
 const DashboardHeader = styled.div`
 display: flex;
-height: 50px;
 width: 100%;
 background-color: #F0F8FF;
 justify-content: space-around;
@@ -68,7 +61,6 @@ gap:10px;
 
 @media (max-width: 800px) {
     flex-direction: column;
-    height: 65px;
   }
 `
 const MaxTempSection = styled.div`
@@ -76,14 +68,14 @@ display: flex;
 justify-content: center;
 width: 50px;
 background-color: #FF9B50;
-border-radius: 50%
+border-radius: 50%;
 `
 const MinTempSection = styled.div`
 display: flex;
 justify-content: center;
 width: 50px;
 background-color: #A6F6FF;
-border-radius: 50%
+border-radius: 50%;
 `
 const MaxWindSection = styled.div`
 display: flex;
@@ -94,7 +86,7 @@ padding: 5px;
 
 p{
     margin: 0;
-    font-size: 15px
+    font-size: 15px;
 }
 `
 const DateSection = styled.div`
@@ -208,9 +200,7 @@ svg {
         width: auto;
       }
    }
-
-
-`
+`;
 
 interface dashboardProps {
     temperaturesArr: number[]

@@ -15,7 +15,7 @@ const ModalContainer = styled.div`
   width: 100%;
   top: 0;
   background-color: rgba(41, 39, 39, 0.95);
-  z-index: 3;
+  z-index: 7;
 `;
 
 const ModalCard = styled.div`
@@ -24,7 +24,6 @@ const ModalCard = styled.div`
   border-radius: 15px;
   background-color: white;
   position: absolute;
-  width: 300px;
   z-index: 10;
   align-self: center;
   overflow: hidden;

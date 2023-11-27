@@ -4,12 +4,13 @@ const FooterContainer = styled.div`
 display: flex;
 justify-content: space-between;
 width: auto;
-height: 95px;
+height: 70px;
 margin: 0 20px 0 20px;
 gap: 10px;
 `
 const IconsContainer = styled.div`
 display: flex;
+flex-wrap: wrap;
 width: 150px;
 align-items: center;
 justify-content: space-around;
@@ -22,6 +23,7 @@ font-weight: 600;
 `
 
 const FooterDescription = styled.p`
+text-align: center;
 margin: 0;
 padding: 5px;
 `
@@ -44,7 +46,6 @@ const Footer: React.FC = () => {
 
                 <FooterDescriptionContainer>
                     <FooterDescription>WeatherWise© 2023</FooterDescription>
-                    <FooterDescription>Made by Bruno Gabado <br></br><a href="https://www.eddisrupt.com/pt">Eddisrupt</a> bootcamp 2023</FooterDescription>
                 </FooterDescriptionContainer>
             </FooterContainer >
         </>

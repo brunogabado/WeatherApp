@@ -1,21 +1,26 @@
 import styled from "styled-components";
 import React, { useState, useRef } from 'react';
 
-const SearchBarContainer = styled.div`
-padding: 30px;
+const Form = styled.form`
+    width: 50%;
+
+    @media (max-width: 700px) {
+        width: 80%
+    }
+
+    @media (max-width: 500px) {
+        width: 100%
+    }
 `
 const SearchInput = styled.input`
-padding: 12px;
 align-content: center;
-width: 500px;
+text-align: center;
+width: 100%;
+height: 40px;
 border-radius: 25px;
 background-color: #ececec;
 border: none;
 font-size: 16px;
-
-@media (max-width: 700px) {
-    width: 300px;
-}
 `
 const List = styled.ul`
 height: 170px;
@@ -41,16 +46,11 @@ animation: fade-in 1s ease-in-out;
 `
 const Option = styled.button`
 margin: 1px 0 1px 0;
-width: 500px;
 padding: 12px;
 align-content: center;
 background-color: #ececec;
 border: none;
 font-size: 16px;
-
-@media (max-width: 700px) {
-    width: 300px;
-}
 `
 
 type cityInfo = {
@@ -66,7 +66,7 @@ interface searchBarProps {
 }
 
 const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, selectCity }) => {
-//useState to control the extend or not of the autoComplete dropdown div
+    //useState to control the extend or not of the autoComplete dropdown div
     const [openList, setOpenList] = useState<boolean>(false)
 
     //setting a Ref to control the calls to the searchCity function. Doing this we are controlling the request to the api.
@@ -92,7 +92,7 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
                 //open the autocomplete list/dropdown
                 setOpenList(false)
             }
-        }, 1200);
+        }, 800);
     };
 
     //function to handle the click in one of the options and call the function that get the forecast
@@ -103,15 +103,13 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
         setOpenList(!openList)
     }
     return (
-        <form>
-            <SearchBarContainer>
-                <SearchInput placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
-                {openList &&
-                    <List>
-                        {autoCompleteList.map((city, index) => (<Option onClick={(event) => handleOptionClick(event, index)} key={index}>{city.localName}</Option>))}
-                    </List>}
-            </SearchBarContainer >
-        </form>
+        <Form>
+            <SearchInput placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
+            {openList &&
+                <List>
+                    {autoCompleteList.map((city, index) => (<Option onClick={(event) => handleOptionClick(event, index)} key={index}>{city.localName}</Option>))}
+                </List>}
+        </Form>
     )
 }
 

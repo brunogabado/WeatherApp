@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { loginType, openModal } from '@/state/modal/modalSlice';
+import { useRouter } from 'next/router';
+import { RootState } from '@/state/store';
+import { clearUserState, setIsLogged } from '@/state/user/userSlice';
+import { deleteCookie } from 'cookies-next';
 
 
 interface NavbarProp {
@@ -11,15 +15,20 @@ interface NavbarProp {
 const HeaderContainer = styled.div`
 display: flex;
 height: 90px;
+width: 100%;
 justify-content: space-between;
-margin: 0 20px 0 20px;
+background-color: #d8f2ff;
+width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 5;
 `
 export const StyledTitleLogo = styled.h1`
 display: flex;
 align-content: center;
   margin-top: 40px;
 @media only screen and (max-width: 600px){
-	font-size: 16px
+	font-size: 18px
 }
 
 `
@@ -27,6 +36,7 @@ export const LogoContainer = styled.div`
 display: flex;
 font-family: 'Bebas Neue', sans-serif;
 align-items: center;
+cursor: pointer;
 `
 const Navbar = styled.nav`
 display: flex;
@@ -39,8 +49,9 @@ flex-direction: column;
 background-color: white;
 padding-top: 30px;
 gap: 15px;
-height: ${(props) => (props.extendNavbar ? "100vh" : "80px")}
-
+height: ${(props) => (props.extendNavbar ? "100vh" : "80px")};
+margin-top: 90px;
+width: 100%;
 `
 const NavbarLink = styled.button`
 font-size: 20px;
@@ -50,11 +61,12 @@ width: 120px;
 height: 40px;
 border: none;
 background: none;
-transition: 0.7s ease;
+transition: 0.2s ease;
 
 &:hover {
     color: #57a7d1;
-    font-size: 18px;
+    font-size: 22px;
+    border-bottom: 1px solid #57a7d1;
 };
 
 @media(max-width: 715px){
@@ -62,7 +74,7 @@ transition: 0.7s ease;
     
     }
 `
-const MobielNavbarLink = styled.button`
+const MobileNavbarLink = styled.button`
 font-size: 20px;
 align-self: center;
 font-family: Arial, Helvetica, sans-serif;
@@ -97,6 +109,8 @@ const Header: React.FC = () => {
 
     const [extendNavbar, setExtendNavbar] = useState<boolean>(false)
     const dispatch = useDispatch()
+    const router = useRouter()
+    const isLogged = useSelector((state: RootState) => state.user.isLogged)
 
     const handleLoginClick = () => {
         setExtendNavbar(false)
@@ -104,11 +118,21 @@ const Header: React.FC = () => {
         dispatch(openModal())
     }
 
+    const handleLogoutClick = () => {
+        dispatch(clearUserState())
+        router.push("/")
+        deleteCookie('userToken');
+    }
+
+    const handleMyProfileClick = () => {
+        isLogged ? router.push("/Profile") : dispatch(openModal())
+    }
+
     return (
         <>
             <HeaderContainer>
 
-                <LogoContainer>
+                <LogoContainer onClick={() => router.push("/")}>
                     <svg width="90px" height="90px" viewBox="0 0 800 1024"
                         version="1.1" xmlns="http://www.w3.org/2000/svg">
                         <path d="M621.7 451.6m-129.5 0a129.5 129.5 0 1 0 259 0 129.5 129.5 0 1 0-259 0Z" fill="#F4CE26" />
@@ -117,9 +141,9 @@ const Header: React.FC = () => {
                     <StyledTitleLogo>WeatherWise</StyledTitleLogo>
                 </LogoContainer>
                 <Navbar>
-                    <NavbarLink>Home</NavbarLink>
-                    <NavbarLink>My Profile</NavbarLink>
-                    <NavbarLink onClick={handleLoginClick}>Login</NavbarLink>
+                    <NavbarLink onClick={() => router.push("/")}>Home</NavbarLink>
+                    <NavbarLink onClick={handleMyProfileClick}>My Profile</NavbarLink>
+                    {isLogged ? <NavbarLink onClick={handleLogoutClick}>Logout</NavbarLink> : <NavbarLink onClick={handleLoginClick}>Login</NavbarLink>}
                     <BurgerMenu onClick={() => { setExtendNavbar((curr) => !curr) }}>
                         {extendNavbar ? <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z" fill="#0F0F0F" />
@@ -144,9 +168,9 @@ const Header: React.FC = () => {
             </HeaderContainer>
             {extendNavbar &&
                 <MobileNavbar extendNavbar={extendNavbar}>
-                    <MobielNavbarLink>Home</MobielNavbarLink>
-                    <MobielNavbarLink>My Profile</MobielNavbarLink>
-                    <MobielNavbarLink onClick={handleLoginClick}>Login</MobielNavbarLink>
+                    <MobileNavbarLink onClick={() => router.push("/")}>Home</MobileNavbarLink>
+                    <MobileNavbarLink onClick={handleMyProfileClick}>My Profile</MobileNavbarLink>
+                    {isLogged ? <MobileNavbarLink onClick={handleLogoutClick}>Logout</MobileNavbarLink> : <MobileNavbarLink onClick={handleLoginClick}>Login</MobileNavbarLink>}
                 </MobileNavbar>}
         </>
     )

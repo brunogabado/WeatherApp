@@ -3,14 +3,19 @@ import { AppProps } from 'next/app';
 import { Provider } from "react-redux"
 import { store } from '@/state/store';
 import Layout from '@/components/layout';
+import GlobalStyles from '@/GlobalStyles';
+import Head from 'next/head';
 
 function MyApp({ Component, pageProps }: AppProps) {
-    return (
+    return (<>
+        <GlobalStyles />
         <Provider store={store}>
-            <Layout>
+            <Head><title>WeatherWise</title></Head>
+            <Layout >
                 <Component {...pageProps} />
             </Layout>
-        </Provider >)
+        </Provider >
+    </>)
 }
 
 export default MyApp;

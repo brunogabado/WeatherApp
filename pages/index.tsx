@@ -7,7 +7,10 @@ import Modal from "../components/Modal";
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, loginType, openModal, registerType } from '@/state/modal/modalSlice';
 import { RootState } from '@/state/store';
+import { GetServerSidePropsContext } from 'next';
+import cookie from 'cookie'
 
+/////interfaces
 
 interface WeatherData {
     dt_txt: string;
@@ -38,98 +41,148 @@ type dashboardDataObj = {
     cityName: string;
 }
 
-
-
+//////styles
 const StyledTitle = styled.h1`
-display: flex;
-align-items: center;
+  display: flex;
+  align-items: center;
   margin: 0;
-`
+  font-size: 2.5rem;
+  color: black;
+
+  @media (max-width: 500px) {
+ font-size: 1.7rem;
+}
+`;
+
 const MainContent = styled.div`
-display:flex;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 7% 0;
+  background-color: #d8f2ff;
+  z-index: 2;
+  position: relative;
+  background-color: #d8f2ff;
+  margin: 90px 0 0 0;
+  width: 100%;
+
+  @media (max-width: 850px) {
 flex-direction: column;
-align-items: center;
-justify-content: space-around;
-padding: 7% 0 7% 0;
-background-color: #D8F2FF;
-z-index: 2;
-position: relative;
+gap: 30px;
+  }
 
-background: url('cloud.png') 95% 10%/cover no-repeat,
-url('cloud.png') 85% 90%/cover no-repeat,
-url('cloud.png') left center/cover no-repeat,
-linear-gradient(rgba(216, 242, 255, 0.8), rgba(216, 242, 255, 0.8));
 
-background-size: 20%;
-`
+`;
+
 const InfoContainer = styled.div`
-display: flex;
-flex-direction: column;
-font-size: 160%;
-width: 700px;
-height: 80%;
-justify-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.5rem;
+  max-width: 600px;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+ 
 
-@media (max-width: 900px){
-    font-size: 140%;
-}
+  
+  @media (max-width: 1150px) {
+    font-size: 1.3rem;
+    max-width: 450px;
+  }
 
-@media (max-width: 750px){
-    width: 500px;
+  @media (max-width: 850px) {
+    font-size: 1.3rem;
+    max-width: 600px;
+  }
+
+  @media (max-width: 750px) {
+    width: 80%;
     gap: 20px;
-    font-size: 110%;
-}
+    font-size: 1.2rem;
+  }
 
-@media (max-width: 600px){
-    gap: 20px;
-    font-size: 90%;
-    width: 70%;
+  @media (max-width: 500px) {
+max-width: 400px;
+font-size: 1.0rem;
 }
+`;
 
+const ImageInfo = styled.img`
+ width: 500px;
+
+ @media (max-width: 1000px) {
+width: 400px;
+  }
+
+  @media (max-width: 500px) {
+width: 300px;
+}
 `
+
 const ButtonContainer = styled.div`
-display: flex;
-height: auto;
-justify-content: center;
-`
+  display: flex;
+  height: auto;
+  justify-content: center;
+  gap: 15px;
+
+  @media (max-width: 850px) {
+gap: 25px;
+  }
+
+  @media (max-width: 500px) {
+ gap: 5px;
+}
+`;
+
 const ButtonLog = styled.button`
-font-size: 75%;
-color: black;
-height: 50px;
-width: 220px;
-background: #57a7d1;
-border-radius: 10px;
-margin: 5px;
-
-transition: 0.7s ease;
-
-&:hover {
-    border: 1px solid white;
-    color: white;
-    font-size: 85%;
-}
-
-@media (max-width: 1220px){
-    height: 40px;
-    width: 170px;
-}
-`
-const DashboardContainer = styled.div`
-display: flex;
-flex-direction: column;
+display:flex;
 align-items: center;
 justify-content: center;
-width: 100%;
-background-color: #57a7d1;
-padding: 25px 0;
+  font-size: 1rem;
+  color: black;
+  height: 40px;
+  width: 150px;
+  background: #57a7d1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
 
-`
+  &:hover {
+    background: #468bbf;
+  }
+
+  @media (max-width: 500px) {
+ width: 120px;
+}
+
+`;
+
+const DashboardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #57a7d1;
+  padding: 25px 10px;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+`;
+
 const SearchTitle = styled.h3`
-margin: 0;
-`
+  margin: 0;
+  font-size: 1.8rem;
+  color: #fff;
+  text-align: center;
+  padding: 10px 20px;
+
+  @media (max-width: 500px) {
+font-size: 1.4rem;
+}
+`;
+//Homepage component
 
 const HomePage: React.FC = () => {
-
     //redux actions
     const dispatch = useDispatch()
     //redux state
@@ -175,7 +228,7 @@ const HomePage: React.FC = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lon}&lon=${coordinates.lat}&appid=403a9c02b9a56c52b7c077f403577b67&units=metric`)
-                console.log("requested!!")
+                // console.log("requested!!")
 
                 //objects with some arrays with the valeus for each day
                 const newTemperaturesObj: { [date: string]: number[] } = {};
@@ -248,13 +301,12 @@ const HomePage: React.FC = () => {
     }
 
     const onClickRegister = () => {
-        dispatch(closeModal())
+        dispatch(openModal())
         dispatch(registerType())
     }
 
     return (
         <>
-            {/* <Header setOpenModal={setOpenModal} setTypeOfForm={setTypeOfForm} /> */}
             <MainContent>
                 <InfoContainer>
                     <StyledTitle>Don't let unexpected weather disrupt your plans. Plan your life wisely with WeatherWise !</StyledTitle>
@@ -264,6 +316,7 @@ const HomePage: React.FC = () => {
                         <ButtonLog onClick={onClickRegister}>Register</ButtonLog>
                     </ButtonContainer>
                 </InfoContainer>
+                <ImageInfo src='infoImg.png' />
             </MainContent>
             <DashboardContainer>
                 <SearchTitle>Search the forecast for 5 days at any location</SearchTitle>
@@ -278,7 +331,6 @@ const HomePage: React.FC = () => {
             {isOpen && (
                 <Modal />
             )}
-
         </>
     );
 };

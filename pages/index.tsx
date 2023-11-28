@@ -4,11 +4,13 @@ import Dashboard from "../components/Dashboard";
 import axios from "axios";
 import SearchBar from '../components/SearchBar';
 import Modal from "../components/Modal";
-import { useDispatch, useSelector } from 'react-redux';
-import { closeModal, loginType, openModal, registerType } from '@/state/modal/modalSlice';
-import { RootState } from '@/state/store';
-import { GetServerSidePropsContext } from 'next';
 import cookie from 'cookie'
+import { GetServerSidePropsContext } from 'next';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginType, openModal, registerType } from '@/state/modal/modalSlice';
+import { RootState } from '@/state/store';
+import { setIsLogged } from '@/state/user/userSlice';
+
 
 /////interfaces
 
@@ -33,6 +35,10 @@ interface cityInfo {
     coordinates: number[]
 }
 
+interface homepageProp {
+    logged: boolean
+}
+
 type dashboardDataObj = {
     wind: Number;
     maxTemp: Number;
@@ -40,6 +46,8 @@ type dashboardDataObj = {
     date: string;
     cityName: string;
 }
+
+
 
 //////styles
 const StyledTitle = styled.h1`
@@ -54,7 +62,7 @@ const StyledTitle = styled.h1`
 }
 `;
 
-const MainContent = styled.div`
+export const MainContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -182,7 +190,9 @@ font-size: 1.4rem;
 `;
 //Homepage component
 
-const HomePage: React.FC = () => {
+const HomePage: React.FC<homepageProp> = ({ logged }) => {
+
+
     //redux actions
     const dispatch = useDispatch()
     //redux state
@@ -225,6 +235,13 @@ const HomePage: React.FC = () => {
     }
 
     useEffect(() => {
+
+        if (logged) {
+            dispatch(setIsLogged())
+        } else {
+            dispatch(openModal())
+        }
+
         const fetchData = async () => {
             try {
                 const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lon}&lon=${coordinates.lat}&appid=403a9c02b9a56c52b7c077f403577b67&units=metric`)
@@ -296,13 +313,17 @@ const HomePage: React.FC = () => {
     }
 
     const onClickLogin = () => {
-        dispatch(openModal())
-        dispatch(loginType())
+        if (!logged) {
+            dispatch(openModal())
+            dispatch(loginType())
+        }
     }
 
     const onClickRegister = () => {
-        dispatch(openModal())
-        dispatch(registerType())
+        if (!logged) {
+            dispatch(openModal())
+            dispatch(registerType())
+        }
     }
 
     return (
@@ -334,6 +355,37 @@ const HomePage: React.FC = () => {
         </>
     );
 };
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const cookieToken = context.req.headers.cookie || "";
+    const parsedCookie = cookie.parse(cookieToken);
+    const tokenInsideCookie = parsedCookie.userToken || "";
+    let logged = false
+    let response;
+
+    try {
+        response = await axios.get("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/me", {
+            headers: {
+                Authorization: "Bearer " + tokenInsideCookie
+            }
+        });
+    } catch (error: any) {
+        console.error("Error fetching authentication:", error.message);
+        response = { status: 500 };
+    }
+
+    if (!cookieToken || response.status !== 200) {
+        return {
+            props: { logged }
+        };
+    }
+    logged = true
+    console.log(logged)
+    return {
+        props: { logged }, // Pass the entire response as a prop
+    };
+}
+
 
 export default HomePage;
 

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import React, { useState, useRef } from 'react';
 
-const Form = styled.form`
+export const Form = styled.form`
     width: 50%;
 
     @media (max-width: 700px) {
@@ -12,7 +12,7 @@ const Form = styled.form`
         width: 100%
     }
 `
-const SearchInput = styled.input`
+export const SearchInput = styled.input`
 align-content: center;
 text-align: center;
 width: 100%;
@@ -22,7 +22,7 @@ background-color: #ececec;
 border: none;
 font-size: 16px;
 `
-const List = styled.ul`
+export const List = styled.ul`
 height: 170px;
 margin: 5px 0;
 display: flex;
@@ -44,7 +44,7 @@ animation: fade-in 1s ease-in-out;
       }
   }
 `
-const Option = styled.button`
+export const Option = styled.button`
 margin: 1px 0 1px 0;
 padding: 12px;
 align-content: center;
@@ -53,7 +53,7 @@ border: none;
 font-size: 16px;
 `
 
-type cityInfo = {
+export interface cityInfo {
     searchedName: string,
     localName: string,
     coordinates: number[]

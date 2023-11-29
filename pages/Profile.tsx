@@ -1,36 +1,55 @@
-import { RootState } from '@/state/store';
-import { useDispatch, useSelector } from 'react-redux';
 import { GetServerSidePropsContext } from 'next';
 import styled from "styled-components";
 import axios from "axios";
 import cookie from 'cookie'
-import { setIsLogged } from '@/state/user/userSlice';
+import { useState } from 'react';
+import SearchBarProfile from '@/components/SearchbarProfile';
+
+const ProfilePageContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
 
 const StyledTitle = styled.h1`
-  margin-top: 90px;
+  margin: 90px 0 0 0;
 `;
 
 const InputsListContainer = styled.div`
+display: flex;
 margin-top: 90px;
 align-self: center;
-    width: 80%;
-    height: 500px;
-    background-color: #57a7d1;
+width: 80%;
+height: 500px;
+background-color: #57a7d1;
 border: 3px solid white;
 border-radius: 25px;
 
 `
 
 const ListContainer = styled.div`
-
+display: flex;
+flex-direction: column;
+height: 100%;
+width: 50%;
+border: 1px solid black;
+border-radius: 25px;
+border: 1px solid black;
 `
 
 const InputsContainer = styled.div`
-
+border: 1px solid black;
+width: 50%;
 `
 
+const DashBoardProfileSection = styled.div`
+    
+`
+const DashboardProfile = styled.div`
+    
+`
 
-interface city {
+interface cityProps {
     name: string
     longitude: number
     latitude: number
@@ -40,36 +59,55 @@ interface ProfileProps {
     userData: {
         name: string,
         email: string,
-        userCity: city,
+        userCity: cityProps,
         userList: {
             cities_id: number,
-            city_data: city
+            city_data: cityProps
         }[]
     }
 }
 
+
+
 const ProfilePage: React.FC<ProfileProps> = ({ userData }) => {
-    const dispatch = useDispatch()
-    dispatch(setIsLogged())
+
+    const [countriesList, setCountriesList] = useState<cityProps[]>([])
+    const [userCity, setUserCity] = useState<cityProps>();
+    const [dayOfSearch, setDayOfSearch] = useState<Date>()
+
+
+    // const dispatch = useDispatch()
+    // dispatch(setIsLogged())
+
+    const handleNewDate = () => {
+    }
+
+    const handleAddingNewCity = (city: cityProps) => {
+        setCountriesList([...countriesList, city])
+    }
+
+    const handleSetNewUserCity = (city: cityProps) => {
+        setUserCity(city)
+    }
+
+
     return (
-        <>
+        <ProfilePageContainer>
+            <StyledTitle>welcome, {userData.name}</StyledTitle>
             <InputsListContainer>
                 <ListContainer>
-                    <div>Portugal                    X</div>
-                    <div>Portugal                    X</div>
-                    <div>Portugal                    X</div>
-                    <div>Portugal                    X</div>
-                    <div>Portugal                    X</div>
-                    <div>Portugal                    X</div>
-
+                    <SearchBarProfile handleNewInput={handleAddingNewCity} />
+                    {countriesList.map((country, index) => <div><p key={index}>{country.name}</p></div>)}
                 </ListContainer>
-                <InputsContainer></InputsContainer>
+                <InputsContainer>
+                    <h3>My current city is {userCity?.name}</h3>
+                    <SearchBarProfile handleNewInput={handleSetNewUserCity} />
+                </InputsContainer>
             </InputsListContainer>
-
-            <StyledTitle>welcome, {userData.name}</StyledTitle>
-            <p>MyCity: {userData.userCity.name}</p>
-            <div>my cities inside the list: {userData.userList.map((city, index) => <p key={index}>{city.city_data.name}</p>)}</div>
-        </>
+            <DashBoardProfileSection>
+                <DashboardProfile></DashboardProfile>
+            </DashBoardProfileSection>
+        </ProfilePageContainer>
     );
 };
 
@@ -102,7 +140,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const userData = {
         name: response.data.name,
         email: response.data.email,
-        userCity: response.data.user_city,
+        userCity: response.data.userCity,
         userList: response.data.list
     }
 

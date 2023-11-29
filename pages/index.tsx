@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 import Dashboard from "../components/Dashboard";
 import axios from "axios";
-import SearchBar from '../components/SearchBar';
+import SearchBar from '../components/SearchbarForecast';
 import Modal from "../components/Modal";
 import cookie from 'cookie'
 import { GetServerSidePropsContext } from 'next';
@@ -216,7 +216,7 @@ const HomePage: React.FC<homepageProp> = ({ logged }) => {
         try {
             //Search cities by name to get a list to do an autocomplete.
             const response = await axios.get(`https://api.maptiler.com/geocoding/${city}.json?key=PTLty8xCfargkFm295Ip&language=pt`)
-
+            
             //creating an array to store all the cities we received in the response.
             const NewAutoCompleteList: cityInfo[] = response.data.features.map((item: searchedCitiesInfo) => ({
                 searchedName: item.text_pt,
@@ -245,7 +245,7 @@ const HomePage: React.FC<homepageProp> = ({ logged }) => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lon}&lon=${coordinates.lat}&appid=403a9c02b9a56c52b7c077f403577b67&units=metric`)
-                // console.log("requested!!")
+                console.log(response.data)
 
                 //objects with some arrays with the valeus for each day
                 const newTemperaturesObj: { [date: string]: number[] } = {};

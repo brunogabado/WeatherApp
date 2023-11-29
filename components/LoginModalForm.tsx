@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { getCookies, setCookie, deleteCookie, getCookie } from 'cookies-next';
+import { setCookie } from 'cookies-next';
 import { FormContainer, CloseButton, FormStyledTitleLogo, FormInput, LinkLabel, Link, SubmitButton, ErrorMessage, SuccessMessage, LogoContainerForm } from './RegisterModalForm';
 import { useDispatch } from 'react-redux';
 import { closeModal, registerType } from '@/state/modal/modalSlice';
 import { setUserName, setUserEmail, setIsLogged, setUserList } from '@/state/user/userSlice';
-
-
 
 const LoginForm: React.FC = () => {
 
@@ -32,6 +30,7 @@ const LoginForm: React.FC = () => {
             })
             console.log("userInfo", userInfo)
             console.log("loginResponse", loginResponse)
+            
             //store token in the cookie
             setCookie('userToken', loginResponse.data.authToken);
 
@@ -42,8 +41,6 @@ const LoginForm: React.FC = () => {
                     submitted: false,
                 }));
             }, 4000);
-
-            console.log(typeof (userInfo.data.email))
 
             //store user info in redux state
             dispatch(setUserEmail(userInfo.data.email));

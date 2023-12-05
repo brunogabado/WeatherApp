@@ -23,7 +23,8 @@ type searchbarProps = {
 
 
 const FormList = styled(Form)`
-width: 90%;
+width: 70%;
+margin-bottom: 50px;
 `
 
 
@@ -45,9 +46,6 @@ const SearchBarProfile: React.FC<searchbarProps> = ({ handleNewInput }) => {
 
             //creating an array to store all the cities we received in the response.
             const NewAutoCompleteList: cityProps[] = response.data.features.map((item: searchedCitiesInfo) => ({
-
-                coordinates: item.geometry.coordinates,
-
                 name: item.place_name,
                 longitude: item.geometry.coordinates[0],
                 latitude: item.geometry.coordinates[1],

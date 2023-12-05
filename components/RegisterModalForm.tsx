@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from "axios";
 import styled from "styled-components";
-import { LogoContainer } from './Header';
 import { useDispatch } from 'react-redux';
 import { closeModal, loginType } from '@/state/modal/modalSlice';
 
@@ -50,8 +49,12 @@ align-content: center;
 	font-size: 16px
 }
 `
-export const LogoContainerForm = styled(LogoContainer)`
-    margin-top: 30px;
+export const LogoContainerForm = styled.div`
+display: flex;
+font-family: 'Bebas Neue', sans - serif;
+align-items: center;
+cursor: pointer;
+margin-top: 30px;
 `
 export const LinkLabel = styled.p`
 

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { loginType, openModal } from '@/state/modal/modalSlice';
 import { useRouter } from 'next/router';
 import { RootState } from '@/state/store';
-import { clearUserState, setIsLogged } from '@/state/user/userSlice';
+import { clearUserState } from '@/state/user/userSlice';
 import { deleteCookie } from 'cookies-next';
 
 
@@ -19,26 +19,27 @@ width: 100%;
 justify-content: space-between;
 background-color: #d8f2ff;
 width: 100%;
-  position: fixed;
-  top: 0;
-  z-index: 5;
+position: fixed;
+top: 0;
+z-index: 5;
 `
-export const StyledTitleLogo = styled.h1`
+const StyledTitleLogo = styled.h1`
 display: flex;
 align-content: center;
-  margin-top: 40px;
+margin-top: 40px;
+
 @media only screen and (max-width: 600px){
 	font-size: 18px
 }
 
 `
-export const LogoContainer = styled.div`
+const LogoContainer = styled.div`
 display: flex;
 font-family: 'Bebas Neue', sans-serif;
 align-items: center;
 cursor: pointer;
 `
-const Navbar = styled.nav`
+const Navbar = styled.div`
 display: flex;
 align-items: center;
 justify-content: center;
@@ -164,14 +165,15 @@ const Header: React.FC = () => {
                         </svg>}
                     </BurgerMenu>
                 </Navbar>
-
             </HeaderContainer>
+
             {extendNavbar &&
-                <MobileNavbar extendNavbar={extendNavbar}>
+                <MobileNavbar extendNavbar={extendNavbar} suppressHydrationWarning>
                     <MobileNavbarLink onClick={() => router.push("/")}>Home</MobileNavbarLink>
                     <MobileNavbarLink onClick={handleMyProfileClick}>My Profile</MobileNavbarLink>
                     {isLogged ? <MobileNavbarLink onClick={handleLogoutClick}>Logout</MobileNavbarLink> : <MobileNavbarLink onClick={handleLoginClick}>Login</MobileNavbarLink>}
-                </MobileNavbar>}
+                </MobileNavbar>
+            }
         </>
     )
 }

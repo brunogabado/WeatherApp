@@ -54,7 +54,7 @@ const StyledTitle = styled.h1`
   display: flex;
   align-items: center;
   margin: 0;
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   color: black;
 
   @media (max-width: 500px) {
@@ -86,7 +86,7 @@ const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: 1.9rem;
   max-width: 600px;
   justify-content: center;
   gap: 20px;
@@ -117,7 +117,7 @@ font-size: 1.0rem;
 `;
 
 const ImageInfo = styled.img`
- width: 500px;
+ width: 600px;
 
  @media (max-width: 1000px) {
 width: 400px;
@@ -173,8 +173,8 @@ const DashboardContainer = styled.div`
   justify-content: center;
   background-color: #57a7d1;
   padding: 25px 10px;
-  border-top-left-radius: 50px;
-  border-top-right-radius: 50px;
+  border-top-left-radius: 65px;
+  border-top-right-radius: 65px;
 `;
 
 const SearchTitle = styled.h3`

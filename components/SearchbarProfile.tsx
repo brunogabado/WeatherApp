@@ -21,7 +21,6 @@ type searchbarProps = {
     handleNewInput: (city: cityProps) => void
 }
 
-
 const FormList = styled(Form)`
 width: 70%;
 margin-bottom: 50px;

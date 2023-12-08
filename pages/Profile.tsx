@@ -1,12 +1,11 @@
 import { GetServerSidePropsContext } from 'next';
 import styled from "styled-components";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import cookie from 'cookie'
 import { getCookie } from 'cookies-next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SearchBarProfile from '@/components/SearchbarProfile';
 import DashboardProfile from '@/components/DashboardProfile';
-import { setUserList } from '@/state/user/userSlice';
 
 const ProfilePageContainer = styled.div`
     display: flex;
@@ -67,7 +66,6 @@ const CityListButton = styled.button`
 const InputsContainer = styled.div`
 display: flex;
 flex-direction: column;
-justify-content: center;
 width: 50%;
 align-items: center;
 text-align: center;
@@ -76,8 +74,9 @@ const DateButtonsContainer = styled.div`
    display: grid;
    grid-template-columns: 1fr 1fr 1fr;
    flex-wrap: wrap;
-   gap: 20px;
+   gap: 30px;
    justify-content: center;
+   margin-top: 50px;
 `
 const DateButton = styled.button`
     background-color: #57a7d1;
@@ -85,7 +84,8 @@ const DateButton = styled.button`
     color: white;
     font-size: 18px;
     border-radius: 10px;
-    width: 150px;
+    width: 200px;
+    height: 60px;
     padding: 5px;
     transition: 0.3s ease;
     position: relative;
@@ -103,12 +103,25 @@ const DateButton = styled.button`
 `
 const DashBoardProfileSection = styled.div`
 display: flex;
+flex-direction: column;
+justify-content: center;
+gap: 30px;
+align-items: center;
+color: white;
 padding: 50px;
 width: calc(100% - 100px);
-justify-content: center;
 background-color: #57a7d1;
 border-top-left-radius: 65px;
 border-top-right-radius: 65px;
+`
+const GridOfDashboards = styled.div`
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+color: white;
+width: 100%;
+justify-content: space-around;
+margin: 50px 0;
 `
 const InfoContainer = styled.div`
     display: flex;
@@ -143,17 +156,19 @@ ul{
     font-weight: 600;
     height: 100%;
     justify-content: space-around;
-    li{
+}
+li{
         display: flex;
         align-items: center;
         gap: 15px;
 
-        svg{
-            width: 50px;
-            height: 50px;
-        }
+
     }
-}
+
+    svg{
+            width: 60px;
+            height: 60px;
+        }
 `
 const InfoHourIcon = styled.div`
     display: flex;
@@ -170,7 +185,6 @@ width: 50px;
 height: 50px;
 border-radius: 50%;
 `
-
 const InfoMinTempIcon = styled(InfoMaxTempIcon)`
 background-color: #A6F6FF;
 `
@@ -189,42 +203,123 @@ interface ProfileProps {
         userCity: CityProps,
         userList: CityProps[],
         listID: number
+    },
+
+    citiesListForecast: cityForecastProps[],
+
+    userCityForecast: cityForecastProps
+}
+
+interface DateTimeFormatOptions {
+    weekday?: 'long' | 'short' | 'narrow';
+    month?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+    day?: 'numeric' | '2-digit';
+}
+
+type cityForecastProps = {
+    location: {
+        localtime: string,
+    },
+
+    forecast: {
+        forecastday: {
+            day: {
+                maxtemp_c: number,
+                mintemp_c: number,
+                maxwind_kph: number,
+                condition: {
+                    code: number,
+                    icon: string
+                }
+            }
+        }[]
     }
 }
 
+type dataToRender = {
+    day: {
+        maxtemp_c: number,
+        mintemp_c: number,
+        maxwind_kph: number,
+        condition: {
+            code: number,
+            icon: string
+        }
+    }
+}
 
-const ProfilePage: React.FC<ProfileProps> = ({ userData }) => {
+export type filteredForecastProps = {
+    name: string,
+    atualHour: string,
+    cityWeather: dataToRender[],
+}
+
+
+
+const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citiesListForecast }) => {
 
     //states
+    const [citiesListAllData, setCitiesListAllData] = useState<cityForecastProps[]>(citiesListForecast)
     const [citiesList, setCitiesList] = useState<CityProps[] | []>(userData.userList)
     const [userCity, setUserCity] = useState<CityProps>(userData.userCity);
-    const [dayOfSearch, setDayOfSearch] = useState<string>('Today')
+    const [dayOfSearch, setDayOfSearch] = useState<number>(0)
     const [datesOfSearch, setDatesOfSearch] = useState<Date[]>([])
+    const [userCityData, setUserCityData] = useState<filteredForecastProps | {}>({})
+    const [citiesListData, setCitiesListData] = useState<filteredForecastProps[] | []>([])
 
-    console.log("userData: ", userData)
-    console.log("list: ", userData.userList)
     const userCookie = getCookie('userToken')
+    const condition: boolean = Object.keys(userCityData).length === 0 || citiesListData.length === 0;
+    const targetRef = useRef<HTMLDivElement>(null);
+    const options: DateTimeFormatOptions = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+    };
 
 
     useEffect(() => {
+        if (citiesListAllData.length > 0) {
+            const newArr = citiesListAllData.map((city, index) => {
+                return {
+                    name: citiesList[index].name,
+                    atualHour: city.location.localtime,
+                    cityWeather: [...city.forecast.forecastday]
+                }
+            })
+            console.log("newArr", newArr)
+            setCitiesListData(newArr)
+        }
+
+        if (userCityForecast) {
+            const newObj = {
+                name: userCity.name,
+                atualHour: userCityForecast.location.localtime,
+                cityWeather: [...userCityForecast.forecast.forecastday]
+
+            }
+
+            setUserCityData(newObj)
+        }
+
+
         const getDaysOfSearch = () => {
             const today = new Date()
-            // console.log("today", today)
+
             const dates: Date[] = []
 
-            for (var i = 0; i < 6; i++) {
+            for (var i = 0; i < 3; i++) {
                 var currentDate = new Date();
                 currentDate.setDate(today.getDate() + i);
-                // console.log(currentDate)
                 dates.push(currentDate)
             }
             setDatesOfSearch(dates)
         }
         getDaysOfSearch()
-    }, [])
+    }, [userCity, citiesListAllData])
 
-    const handleNewDate = (event: React.MouseEvent<HTMLElement>) => {
-        setDayOfSearch((event.target as HTMLButtonElement)?.value)
+    const handleNewDate = (day: number) => {
+        setDayOfSearch(day)
+        targetRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
 
     const handleAddingNewCity = async (city: CityProps) => {
@@ -234,7 +329,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData }) => {
 
         try {
             console.log("citiesList: ", [...citiesList, city])
-            const response = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/lists/${userData.listID}`,
+            const xanoResponse = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/lists/${userData.listID}`,
                 {
                     list_id: userData.listID,
                     cities: [...citiesList, city]
@@ -242,8 +337,11 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData }) => {
 
                 { headers: { Authorization: "Bearer " + userCookie } })
 
+            const cityWeather = await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=6&aqi=no&alerts=no`);
+            setCitiesListAllData([...citiesListAllData, cityWeather.data])
+
             setCitiesList([...citiesList, city])
-            console.log("response from xano: ", response)
+            console.log("response from xano: ", xanoResponse)
 
         } catch (e) {
             console.log(e)
@@ -263,6 +361,8 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData }) => {
                 },
 
                 { headers: { Authorization: "Bearer " + userCookie } })
+
+            setCitiesListAllData([...citiesListAllData.slice(0, index), ...citiesListAllData.slice(index + 1)])
 
             setCitiesList(newList)
             console.log(response)
@@ -288,28 +388,30 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData }) => {
         setUserCity(newCity.data.userCity)
     }
 
+    console.log("citiesListAllData---", citiesListAllData)
+    console.log("citiesListData---", citiesListData)
+    console.log("userCityData---", userCityData)
+    console.log("datesOfSEARCH--", datesOfSearch)
+
     return (
         <ProfilePageContainer>
             <InputsListContainer>
                 <ListContainer>
                     <h2>My List of cities</h2>
                     <SearchBarProfile handleNewInput={handleAddingNewCity} />
-
-
                     {citiesList.length === 0 ? <h3>list is empty</h3> : citiesList.map((country, index) =>
-                        <CityListBox key={index}><CityListText key={index}>{country.name}</CityListText>
-                            <CityListButton key={index} value={index} onClick={() => handleDeleteCity(index)}><svg width="30px" height="30px" viewBox="0 0 1024 1024" className="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#3688FF" /><path d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z" fill="#5F6379" /></svg></CityListButton>
+                        <CityListBox key={index}><CityListText>{country.name}</CityListText>
+                            <CityListButton value={index} onClick={() => handleDeleteCity(index)}><svg key="11" width="30px" height="30px" viewBox="0 0 1024 1024" className="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#3688FF" /><path d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z" fill="#5F6379" /></svg></CityListButton>
                         </CityListBox>)}
 
                 </ListContainer>
                 <InputsContainer>
                     <h2>My current city is {userCity.name}</h2>
                     <SearchBarProfile handleNewInput={handleSetNewUserCity} />
-                    <h2>Date picked: {dayOfSearch?.split(" ").slice(0, 4).join(" ")} </h2>
                     <DateButtonsContainer>
                         {datesOfSearch.map((day, index) => {
-                            const dayInString = index === 0 ? 'Today' : index === 1 ? 'Tomorrow' : day instanceof Date ? day.toString().split(' ')[0] + ' ' + day.toString().split(' ')[2] : '';
-                            return (<DateButton key={index} value={dayInString} onClick={(e) => handleNewDate(e)} >{dayInString} </DateButton>);
+                            const dayInString = index === 0 ? 'Today' : index === 1 ? 'Tomorrow' : day instanceof Date ? day.toString().split(' ')[0] + ', ' + day.toString().split(' ')[2] : '';
+                            return (<DateButton key={index} value={dayInString} onClick={() => handleNewDate(index)} >{dayInString} </DateButton>);
                         })}
                     </DateButtonsContainer>
                 </InputsContainer>
@@ -318,12 +420,12 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData }) => {
             <InfoContainer>
                 <ImageInfo src='paperAirplane.png' />
                 <BoxInfo>
-                    <h2>Get all the daily comparison between your city, and the list created by yourself !</h2>
+                    <h2>Get all the daily comparison between your city, and a list created by yourself!</h2>
                     <ul>
-                        <li><InfoHourIcon />Actual Hour</li>
+                        <li><InfoHourIcon />Local hour (at the moment)</li>
 
                         <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64">
+                            <svg key="1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64">
                                 <defs>
                                     <linearGradient id="a" x1="16.5" y1="19.67" x2="21.5" y2="28.33" gradientUnits="userSpaceOnUse">
                                         <stop offset="0" stopColor="#fbbf24" />
@@ -360,26 +462,35 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData }) => {
                                     <animateTransform attributeName="transform" begin="-0.2s" type="translate" values="1 -5; -2 10" dur="0.7s" repeatCount="indefinite" />
                                     <animate attributeName="opacity" begin="-0.2s" values="0;1;1;0" dur="0.7s" repeatCount="indefinite" />
                                 </line>
-                            </svg>Icon with the state of the weather
+                            </svg>Icon with the state of the weather <br></br>(of the selected day)
                         </li>
 
-                        <li><InfoMaxTempIcon />Maximum Temperature </li>
+                        <li><InfoMaxTempIcon />Maximum Temperature <br></br>(of the selected day)</li>
 
-                        <li><InfoMinTempIcon />Minimum Temperature </li>
+                        <li><InfoMinTempIcon />Minimum Temperature <br></br>(of the selected day)</li>
 
                         <li>
-                            <svg width="40px" height="40px" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M6.25 5.5C6.25 3.70508 7.70507 2.25 9.5 2.25C11.2949 2.25 12.75 3.70507 12.75 5.5C12.75 7.29493 11.2949 8.75 9.5 8.75H3C2.58579 8.75 2.25 8.41421 2.25 8C2.25 7.58579 2.58579 7.25 3 7.25H9.5C10.4665 7.25 11.25 6.4665 11.25 5.5C11.25 4.5335 10.4665 3.75 9.5 3.75C8.5335 3.75 7.75 4.5335 7.75 5.5V5.85714C7.75 6.27136 7.41421 6.60714 7 6.60714C6.58579 6.60714 6.25 6.27136 6.25 5.85714V5.5Z" fill="#1C274C" />
                                 <path opacity="0.4" d="M3.25 14C3.25 13.5858 3.58579 13.25 4 13.25H18.5C20.8472 13.25 22.75 15.1528 22.75 17.5C22.75 19.8472 20.8472 21.75 18.5 21.75C16.1528 21.75 14.25 19.8472 14.25 17.5V17C14.25 16.5858 14.5858 16.25 15 16.25C15.4142 16.25 15.75 16.5858 15.75 17V17.5C15.75 19.0188 16.9812 20.25 18.5 20.25C20.0188 20.25 21.25 19.0188 21.25 17.5C21.25 15.9812 20.0188 14.75 18.5 14.75H4C3.58579 14.75 3.25 14.4142 3.25 14Z" fill="#1C274C" />
                                 <path opacity="0.7" d="M14.25 7.5C14.25 5.15279 16.1528 3.25 18.5 3.25C20.8472 3.25 22.75 5.15279 22.75 7.5C22.75 9.84721 20.8472 11.75 18.5 11.75H2C1.58579 11.75 1.25 11.4142 1.25 11C1.25 10.5858 1.58579 10.25 2 10.25H18.5C20.0188 10.25 21.25 9.01878 21.25 7.5C21.25 5.98122 20.0188 4.75 18.5 4.75C16.9812 4.75 15.75 5.98122 15.75 7.5V8C15.75 8.41421 15.4142 8.75 15 8.75C14.5858 8.75 14.25 8.41421 14.25 8V7.5Z" fill="#1C274C" />
-                            </svg>Wind Speed
+                            </svg>Maximum Wind Speed <br></br>(of the selected day)
                         </li>
                     </ul>
                 </BoxInfo>
             </InfoContainer>
 
-            <DashBoardProfileSection>
-                <DashboardProfile />
+
+            <DashBoardProfileSection ref={targetRef}>
+                {condition ?
+                    <h2>You have not selected your city or the list is empty.</h2> :
+                    <h2>{dayOfSearch === 0 ? `Today, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString('en-US', options)}` :
+                        dayOfSearch === 1 ? `Tomorrow, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString('en-US', options)}` :
+                            datesOfSearch[dayOfSearch] instanceof Date ?
+                                new Date(datesOfSearch[dayOfSearch]).toLocaleDateString('en-US', options) : ''}</h2>}
+                <GridOfDashboards>
+                    {!condition && citiesListData.map((city, index) => <DashboardProfile key={index} userCityData={userCityData as filteredForecastProps} cityListData={city} day={dayOfSearch} />)}
+                </GridOfDashboards>
             </DashBoardProfileSection>
         </ProfilePageContainer>
     );
@@ -389,7 +500,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const cookieToken = context.req.headers.cookie || "";
     const parsedCookie = cookie.parse(cookieToken);
     const tokenInsideCookie = parsedCookie.userToken || "";
-    const listDailyWeather: object[] = [];
+    let citiesListForecast: cityForecastProps[] = [];
+    let userCityForecast: cityForecastProps | {} = {}
     let authResponse;
 
     try {
@@ -399,12 +511,24 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             }
         });
 
-        if (authResponse.data.userList.length !== 0) {
-            authResponse.data.userList.map(async (cityList: CityProps, index: number) => {
-                const weatherData = await axios.get(`api.openweathermap.org/data/2.5/forecast/daily?lat=${cityList.latitude}&lon=${cityList.longitude}&cnt=6&appid=403a9c02b9a56c52b7c077f403577b67`)
-                listDailyWeather.push(weatherData)
-            })
+        if (authResponse.data.userCity) {
+            const userCity = authResponse.data.userCity
+            const userCityData = await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${userCity.latitude},${userCity.longitude}&days=6&aqi=no&alerts=no`)
+            userCityForecast = userCityData.data
         }
+
+
+        if (authResponse.data.list.cities.length > 0) {
+            // Use map to create an array of promises
+            const promises = authResponse.data.list.cities.map(async (cityList: CityProps, index: number) => {
+                const weatherData = await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${cityList.latitude},${cityList.longitude}&days=6&aqi=no&alerts=no`);
+                return weatherData.data as cityForecastProps;
+            });
+
+            // Use Promise.all to wait for all promises to settle
+            citiesListForecast = await Promise.all(promises);
+        }
+
     } catch (error: any) {
         console.error("Error fetching authentication:", error.message);
         authResponse = { status: 500 };
@@ -429,7 +553,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
 
     return {
-        props: { userData, listDailyWeather }, // Pass the entire response as a prop
+        props: { userData, userCityForecast, citiesListForecast }, // Pass the entire response as a prop
     };
 }
 

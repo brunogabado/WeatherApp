@@ -155,14 +155,14 @@ const RegisterForm: React.FC = () => {
                 {!submitRequest.error && submitRequest.submitted && <SuccessMessage>Account created!</SuccessMessage>}
                 {submitRequest.isLoading && <p>Loading..</p>}
 
-                <FormInput placeholder='email' onChange={(e) => setEmail(e.target.value)} />
-                <FormInput placeholder='username' onChange={(e) => setName(e.target.value)} />
-                <FormInput placeholder='password' onChange={(e) => setPassword(e.target.value)} />
+                <FormInput required autoComplete="on" type='email' placeholder='email' onChange={(e) => setEmail(e.target.value)} />
+                <FormInput required autoComplete='on' placeholder='username' onChange={(e) => setName(e.target.value)} />
+                <FormInput required autoComplete="on" type='password' placeholder='password' onChange={(e) => setPassword(e.target.value)} />
 
                 <LinkLabel>Do you have an account?</LinkLabel>
                 <Link onClick={() => dispatch(loginType())}>LOGIN</Link>
 
-                <SubmitButton type='submit'>Regist</SubmitButton>
+                <SubmitButton type='button'>Regist</SubmitButton>
             </FormContainer >
         </>
     )

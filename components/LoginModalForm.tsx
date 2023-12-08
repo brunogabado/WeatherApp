@@ -30,7 +30,7 @@ const LoginForm: React.FC = () => {
             })
             console.log("userInfo", userInfo)
             console.log("loginResponse", loginResponse)
-            
+
             //store token in the cookie
             setCookie('userToken', loginResponse.data.authToken);
 
@@ -92,8 +92,8 @@ const LoginForm: React.FC = () => {
                 {!submitRequest.error && submitRequest.submitted && <SuccessMessage>Account created!</SuccessMessage>}
                 {submitRequest.isLoading && <p>Loading..</p>}
 
-                <FormInput placeholder='email' onChange={(e) => setEmail(e.target.value)} />
-                <FormInput placeholder='password' onChange={(e) => setPassword(e.target.value)} />
+                <FormInput required autoComplete="on" type='email' placeholder='email' onChange={(e) => setEmail(e.target.value)} />
+                <FormInput required autoComplete="on" type='password' placeholder='password' onChange={(e) => setPassword(e.target.value)} />
 
                 <LinkLabel>Don't have an account?</LinkLabel>
                 <Link onClick={() => dispatch(registerType())} > SIGN UP</Link>

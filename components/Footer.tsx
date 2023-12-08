@@ -21,7 +21,6 @@ flex-direction: column;
 justify-content: center;
 font-weight: 600;
 `
-
 const FooterDescription = styled.p`
 text-align: center;
 margin: 0;

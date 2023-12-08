@@ -7,6 +7,7 @@ background: linear-gradient(180deg, rgba(87,167,209,1) 1%, rgba(255,255,255,1) 2
 border: 2px solid white;
 border-radius: 30px;
 padding: 20px;
+margin: 50px;
 `
 const DashboardGrid = styled.div`
     display: grid;

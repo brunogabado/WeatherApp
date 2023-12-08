@@ -24,6 +24,14 @@ type searchbarProps = {
 const FormList = styled(Form)`
 width: 70%;
 margin-bottom: 50px;
+
+@media (max-width: 900px) {
+ width: 400px;
+}
+
+@media (max-width: 450px) {
+width: 300px;
+}
 `
 
 

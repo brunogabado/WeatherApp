@@ -11,6 +11,7 @@ const ProfilePageContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 `
 const InputsListContainer = styled.div`
 display: flex;
@@ -20,10 +21,14 @@ width: calc(100% - 60px);
 min-height: 400px;
 padding: 30px;
 background-color: #57a7d1;
-/* border: 3px solid white; */
 border-bottom-left-radius: 65px;
 border-bottom-right-radius: 65px;
 
+@media (max-width: 900px) {
+    width: calc(100% - 60px);
+ flex-direction: column;
+padding-bottom: 60px;
+}
 `
 const ListContainer = styled.div`
 display: flex;
@@ -32,6 +37,10 @@ align-items: center;
 height: 100%;
 width: 50%;
 border-radius: 25px;
+
+@media (max-width: 900px) {
+width: 100%;
+}
 `
 const CityListBox = styled.div`
     display: flex;
@@ -42,6 +51,10 @@ const CityListBox = styled.div`
     justify-content: space-between;
     align-items:center; 
     margin-bottom: 10px;
+
+    @media (max-width: 900px) {
+width: 90%;
+}
 `
 const CityListText = styled.p`
 margin: 0;
@@ -69,6 +82,13 @@ flex-direction: column;
 width: 50%;
 align-items: center;
 text-align: center;
+
+@media (max-width: 900px) {
+    width: 100%;
+    margin-top: 25px;
+padding-top: 25px;
+border-top: 1px solid white;
+}
 `
 const DateButtonsContainer = styled.div`
    display: grid;
@@ -77,6 +97,15 @@ const DateButtonsContainer = styled.div`
    gap: 30px;
    justify-content: center;
    margin-top: 50px;
+
+   @media (max-width: 500px) {
+margin-top: 20px;
+gap: 10px;
+}
+
+   @media (max-width: 900px) {
+margin-top: 20px;
+}
 `
 const DateButton = styled.button`
     background-color: #57a7d1;
@@ -84,8 +113,8 @@ const DateButton = styled.button`
     color: white;
     font-size: 18px;
     border-radius: 10px;
-    width: 200px;
     height: 60px;
+    width: 200px;
     padding: 5px;
     transition: 0.3s ease;
     position: relative;
@@ -100,6 +129,23 @@ const DateButton = styled.button`
     transform: scale(1.2);
     transition: transform 0.3s ease;
     }
+
+    
+  @media (max-width: 1500px) {
+ width: 120px;
+}
+
+@media (max-width: 1200px) {
+ width: 100px;
+}
+
+@media (max-width: 900px) {
+ width: 100px;
+}
+
+@media (max-width: 350px) {
+ width: 90px;
+}
 `
 const DashBoardProfileSection = styled.div`
 display: flex;
@@ -113,6 +159,10 @@ width: calc(100% - 100px);
 background-color: #57a7d1;
 border-top-left-radius: 65px;
 border-top-right-radius: 65px;
+
+h2{
+    text-align: center;
+}
 `
 const GridOfDashboards = styled.div`
 display: flex;
@@ -120,7 +170,7 @@ flex-wrap: wrap;
 align-items: center;
 color: white;
 width: 100%;
-justify-content: space-around;
+justify-content: center;
 margin: 50px 0;
 `
 const InfoContainer = styled.div`
@@ -128,17 +178,24 @@ const InfoContainer = styled.div`
     padding: 50px;
     width: calc(100% - 100px);
     justify-content: space-around;
+
+    @media (max-width: 900px) {
+flex-direction: column;
+height: auto;
+align-items: center;
+gap: 50px;
+}
 `
 const ImageInfo = styled.img`
  width: 600px;
  transform: rotate(10deg);
 
- @media (max-width: 1000px) {
+ @media (max-width: 1150px) {
 width: 400px;
   }
 
   @media (max-width: 500px) {
-width: 300px;
+width: 280px;
 }
 `
 const BoxInfo = styled.div`
@@ -149,6 +206,13 @@ width: 400px;
 padding: 30px;
 border-radius: 25px;
 
+h2{
+    @media (max-width: 500px) {
+font-size: 19px;
+width: 280px;
+}
+}
+
 ul{
     display: flex;
     flex-direction: column;
@@ -156,19 +220,35 @@ ul{
     font-weight: 600;
     height: 100%;
     justify-content: space-around;
+
+    @media (max-width: 500px) {
+ padding: 0;
+ width: 280px;
+}
 }
 li{
         display: flex;
         align-items: center;
         gap: 15px;
 
+        @media (max-width: 500px) {
+ transform: scale(0.8)
+}
+}
 
+svg{
+     width: 60px;
+    height: 60px;
     }
 
-    svg{
-            width: 60px;
-            height: 60px;
-        }
+@media (max-width: 1150px) {
+ width: 300px;
+}
+
+@media (max-width: 500px) {
+ padding: 15px;
+ width: 280px;
+}
 `
 const InfoHourIcon = styled.div`
     display: flex;
@@ -388,10 +468,10 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         setUserCity(newCity.data.userCity)
     }
 
-    console.log("citiesListAllData---", citiesListAllData)
-    console.log("citiesListData---", citiesListData)
-    console.log("userCityData---", userCityData)
-    console.log("datesOfSEARCH--", datesOfSearch)
+    // console.log("citiesListAllData---", citiesListAllData)
+    // console.log("citiesListData---", citiesListData)
+    // console.log("userCityData---", userCityData)
+    // console.log("datesOfSEARCH--", datesOfSearch)
 
     return (
         <ProfilePageContainer>

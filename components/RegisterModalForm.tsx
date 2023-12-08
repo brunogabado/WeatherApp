@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import axios from "axios";
 import styled from "styled-components";
 import { useDispatch } from 'react-redux';
+import { setCookie } from 'cookies-next';
+import { useRouter } from 'next/router';
 import { closeModal, loginType } from '@/state/modal/modalSlice';
+import { setUserName, setUserEmail, setIsLogged, setUserList } from '@/state/user/userSlice';
+
 
 export const FormContainer = styled.form`
 display: flex;
@@ -90,24 +94,25 @@ const RegisterForm: React.FC = () => {
     const [submitRequest, setSubmitRequest] = useState({ isLoading: false, submitted: false, error: false, errorMessage: "" });
 
     const dispatch = useDispatch()
-
+    const router = useRouter()
 
     const onRegistSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
         try {
-            e.preventDefault()
             setSubmitRequest((prevSubmitRequest) => ({ ...prevSubmitRequest, isLoading: true, }));
 
             const registResponse = await axios.post("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/signup", { name, email, password })
             console.log(registResponse)
-            //store the token in the cookie(loginResponse.data.authToken)
+            //store the token in the cookie(registResponse.data.authToken)
             const userInfo = await axios.get("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/me", {
                 headers: {
                     Authorization: "Bearer " + registResponse.data.authToken
                 }
             })
-            console.log(userInfo)
-            console.log(registResponse)
-            //store info in the cookie
+
+            //store token in the cookie
+            setCookie('userToken', registResponse.data.authToken);
+
             setSubmitRequest({ error: false, isLoading: false, submitted: true, errorMessage: "" });
             setTimeout(() => {
                 setSubmitRequest((prevSubmitRequest) => ({
@@ -115,6 +120,15 @@ const RegisterForm: React.FC = () => {
                     submitted: false,
                 }));
             }, 4000);
+
+            //store user info in redux state
+            dispatch(setUserEmail(userInfo.data.email));
+            dispatch(setUserName(userInfo.data.name));
+            dispatch(setIsLogged())
+            dispatch(closeModal())
+
+            //push user to the profile page
+            router.push('/Profile');
         } catch (err: any) {
             console.log("error on regist submit: ", err)
             setSubmitRequest({ error: true, isLoading: false, submitted: true, errorMessage: err.response.data.message });
@@ -162,7 +176,7 @@ const RegisterForm: React.FC = () => {
                 <LinkLabel>Do you have an account?</LinkLabel>
                 <Link onClick={() => dispatch(loginType())}>LOGIN</Link>
 
-                <SubmitButton type='button'>Regist</SubmitButton>
+                <SubmitButton type='submit'>Regist</SubmitButton>
             </FormContainer >
         </>
     )

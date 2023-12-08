@@ -28,8 +28,6 @@ const LoginForm: React.FC = () => {
                     Authorization: "Bearer " + loginResponse.data.authToken
                 }
             })
-            console.log("userInfo", userInfo)
-            console.log("loginResponse", loginResponse)
 
             //store token in the cookie
             setCookie('userToken', loginResponse.data.authToken);
@@ -61,7 +59,7 @@ const LoginForm: React.FC = () => {
     return (
         <>
 
-            <FormContainer method='post' onSubmit={(e) => onLoginSubmit(e)}>
+            <FormContainer onSubmit={(e) => onLoginSubmit(e)}>
                 <CloseButton onClick={() => dispatch(closeModal())}>
                     <svg width="20px" height="20px" viewBox="0 -0.5 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                         <title>close_mini [#1522]</title>

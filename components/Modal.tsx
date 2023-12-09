@@ -16,6 +16,18 @@ const ModalContainer = styled.div`
   top: 0;
   background-color: rgba(41, 39, 39, 0.95);
   z-index: 7;
+
+  animation: fade 0.5s ease-in-out;
+
+  @keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
 `;
 
 const ModalCard = styled.div`

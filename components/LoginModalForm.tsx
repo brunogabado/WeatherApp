@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { setCookie } from 'cookies-next';
-import { FormContainer, CloseButton, FormStyledTitleLogo, FormInput, LinkLabel, Link, SubmitButton, ErrorMessage, SuccessMessage, LogoContainerForm } from './RegisterModalForm';
+import { FormCard, FormContainer, CloseButton, FormStyledTitleLogo, FormInput, LinkLabel, Link, SubmitButton, ErrorMessage, SuccessMessage, LogoContainerForm } from './RegisterModalForm';
 import { useDispatch } from 'react-redux';
 import { closeModal, registerType } from '@/state/modal/modalSlice';
-import { setUserName, setUserEmail, setIsLogged, setUserList } from '@/state/user/userSlice';
+import { setUserName, setUserEmail, setIsLogged } from '@/state/user/userSlice';
 
 const LoginForm: React.FC = () => {
 
@@ -59,7 +59,7 @@ const LoginForm: React.FC = () => {
     return (
         <>
 
-            <FormContainer onSubmit={(e) => onLoginSubmit(e)}>
+            <FormCard >
                 <CloseButton onClick={() => dispatch(closeModal())}>
                     <svg width="20px" height="20px" viewBox="0 -0.5 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                         <title>close_mini [#1522]</title>
@@ -89,15 +89,16 @@ const LoginForm: React.FC = () => {
                 {submitRequest.error && <ErrorMessage>{submitRequest.errorMessage}</ErrorMessage>}
                 {!submitRequest.error && submitRequest.submitted && <SuccessMessage>Account created!</SuccessMessage>}
                 {submitRequest.isLoading && <p>Loading..</p>}
+                <FormContainer onSubmit={(e) => onLoginSubmit(e)}>
+                    <FormInput required autoComplete="on" type='email' placeholder='email' onChange={(e) => setEmail(e.target.value)} />
+                    <FormInput required autoComplete="on" type='password' placeholder='password' onChange={(e) => setPassword(e.target.value)} />
 
-                <FormInput required autoComplete="on" type='email' placeholder='email' onChange={(e) => setEmail(e.target.value)} />
-                <FormInput required autoComplete="on" type='password' placeholder='password' onChange={(e) => setPassword(e.target.value)} />
+                    <LinkLabel>Don't have an account?</LinkLabel>
+                    <Link onClick={() => dispatch(registerType())} > SIGN UP</Link>
 
-                <LinkLabel>Don't have an account?</LinkLabel>
-                <Link onClick={() => dispatch(registerType())} > SIGN UP</Link>
-
-                <SubmitButton type='submit'>LOGIN</SubmitButton>
-            </FormContainer >
+                    <SubmitButton type='submit'>LOGIN</SubmitButton>
+                </FormContainer>
+            </FormCard >
 
         </>
     )

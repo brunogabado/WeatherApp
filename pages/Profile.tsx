@@ -373,6 +373,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     const [userCityData, setUserCityData] = useState<filteredForecastProps | {}>({})
     const [citiesListData, setCitiesListData] = useState<filteredForecastProps[] | []>([])
 
+    const dispatch = useDispatch()
     const [alert, setAlert] = useState({ open: false, message: "", messageType: "" });
     const userCookie = getCookie('userToken')
     const condition: boolean = Object.keys(userCityData).length === 0 || citiesListData.length === 0;
@@ -385,6 +386,9 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
 
     useEffect(() => {
+
+        dispatch(setIsLogged())
+
         if (citiesListAllData.length > 0) {
             const newArr = citiesListAllData.map((city, index) => {
                 return {

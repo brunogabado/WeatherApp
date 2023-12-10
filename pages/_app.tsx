@@ -4,6 +4,7 @@ import { Provider } from "react-redux"
 import { store } from '@/state/store';
 import Layout from '@/components/layout';
 import GlobalStyles from '@/GlobalStyles';
+import HydrationZustand from "@/components/HydrationComponent"
 import Head from 'next/head';
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -14,9 +15,11 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <title>WeatherWise</title>
                 <link rel="icon" href="favicon.ico" />
             </Head>
-            <Layout >
-                <Component {...pageProps} />
-            </Layout>
+            <HydrationZustand>
+                <Layout >
+                    <Component {...pageProps} />
+                </Layout>
+            </HydrationZustand>
         </Provider >
     </>)
 }

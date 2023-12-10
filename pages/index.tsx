@@ -272,9 +272,9 @@ const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
 
     useEffect(() => {
 
-        // if (logged) {
-        //     dispatch(setIsLogged())
-        // }
+        if (isLogged) {
+            dispatch(setIsLogged())
+        }
 
         const fetchData = async () => {
             try {

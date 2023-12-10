@@ -8,9 +8,6 @@ import { clearUserState } from '@/state/user/userSlice';
 import { deleteCookie } from 'cookies-next';
 import { setIsLogged } from '@/state/user/userSlice';
 
-
-
-
 const HeaderContainer = styled.div`
 display: flex;
 height: 90px;
@@ -114,11 +111,6 @@ const Header: React.FC = () => {
     const router = useRouter()
     const isLogged = useSelector((state: RootState) => state.user.isLogged)
     const dispatch = useDispatch()
-
-    // useEffect(() => {
-    //     dispatch(setIsLogged())
-    //     setExtendNavbar(false)
-    // }, [])
 
     const handleLoginClick = () => {
         setExtendNavbar(false)

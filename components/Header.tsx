@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components";
 import { useDispatch, useSelector } from 'react-redux'
 import { loginType, openModal } from '@/state/modal/modalSlice';
@@ -8,9 +8,6 @@ import { clearUserState } from '@/state/user/userSlice';
 import { deleteCookie } from 'cookies-next';
 
 
-interface NavbarProp {
-    extendNavbar: boolean
-}
 
 const HeaderContainer = styled.div`
 display: flex;
@@ -44,13 +41,16 @@ display: flex;
 align-items: center;
 justify-content: center;
 `
-const MobileNavbar = styled.div<NavbarProp>`
+const MobileNavbar = styled.div`
 display: flex;
+position: fixed;
+top: 0;
+z-index: 12;
 flex-direction: column;
 background-color: white;
-padding-top: 30px;
+padding: 30px 0;
 gap: 15px;
-height: ${(props) => (props.extendNavbar ? "100vh" : "80px")};
+height: 100%;
 margin-top: 90px;
 width: 100%;
 `
@@ -127,6 +127,7 @@ const Header: React.FC = () => {
 
     const handleMyProfileClick = () => {
         isLogged ? router.push("/Profile") : dispatch(openModal())
+        setExtendNavbar(false)
     }
 
     return (
@@ -141,7 +142,7 @@ const Header: React.FC = () => {
                     </svg>
                     <StyledTitleLogo>WeatherWise</StyledTitleLogo>
                 </LogoContainer>
-                
+
                 <Navbar>
                     <NavbarLink onClick={() => router.push("/")}>Home</NavbarLink>
                     <NavbarLink onClick={handleMyProfileClick}>My Profile</NavbarLink>
@@ -169,7 +170,7 @@ const Header: React.FC = () => {
             </HeaderContainer>
 
             {extendNavbar &&
-                <MobileNavbar extendNavbar={extendNavbar} suppressHydrationWarning>
+                <MobileNavbar suppressHydrationWarning>
                     <MobileNavbarLink onClick={() => router.push("/")}>Home</MobileNavbarLink>
                     <MobileNavbarLink onClick={handleMyProfileClick}>My Profile</MobileNavbarLink>
                     {isLogged ? <MobileNavbarLink onClick={handleLogoutClick}>Logout</MobileNavbarLink> : <MobileNavbarLink onClick={handleLoginClick}>Login</MobileNavbarLink>}

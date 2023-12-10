@@ -416,7 +416,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             }
         });
     } catch (error: any) {
-        console.error("Error fetching authentication:", error.message);
+        console.error("login check:", error.message);
         response = { status: 500 };
     }
 

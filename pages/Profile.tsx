@@ -313,7 +313,9 @@ interface ProfileProps {
 
     citiesListForecast: cityForecastProps[],
 
-    userCityForecast: cityForecastProps
+    userCityForecast: cityForecastProps,
+
+    isLogged: boolean
 }
 
 interface DateTimeFormatOptions {
@@ -360,7 +362,7 @@ export type filteredForecastProps = {
     cityWeather: dataToRender[],
 }
 
-const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citiesListForecast }) => {
+const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citiesListForecast, isLogged }) => {
 
     //states
     const [citiesListAllData, setCitiesListAllData] = useState<cityForecastProps[]>(citiesListForecast)
@@ -372,7 +374,6 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     const [citiesListData, setCitiesListData] = useState<filteredForecastProps[] | []>([])
 
     const [alert, setAlert] = useState({ open: false, message: "", messageType: "" });
-    const dispatch = useDispatch()
     const userCookie = getCookie('userToken')
     const condition: boolean = Object.keys(userCityData).length === 0 || citiesListData.length === 0;
     const targetRef = useRef<HTMLDivElement>(null);
@@ -421,11 +422,10 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             setDatesOfSearch(dates)
         }
         getDaysOfSearch()
+
     }, [userCity, citiesListAllData])
 
-    useEffect(() => {
-        dispatch(setIsLogged())
-    })
+
     const handleNewDate = (day: number) => {
         setDayOfSearch(day)
         targetRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -568,11 +568,6 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
     }
 
-    // console.log("citiesListAllData---", citiesListAllData)
-    // console.log("citiesListData---", citiesListData)
-    // console.log("userCityData---", userCityData)
-    // console.log("datesOfSEARCH--", datesOfSearch)
-
     return (
         <ProfilePageContainer>
             {alert.message.length > 0 !== null && alert.messageType === "success" ?
@@ -582,6 +577,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                 <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={alert.open} autoHideDuration={6000}>
                     <Alert severity="error" sx={{ width: '100%' }}>{alert.message}</Alert>
                 </Snackbar>}
+
             <InputsListContainer>
                 <ListContainer>
                     <h2>My List of cities</h2>
@@ -688,6 +684,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const tokenInsideCookie = parsedCookie.userToken || "";
     let citiesListForecast: cityForecastProps[] = [];
     let userCityForecast: cityForecastProps | {} = {}
+    let isLogged = false
     let authResponse;
 
     try {
@@ -721,6 +718,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
 
     if (!cookieToken || authResponse.status !== 200) {
+        isLogged = false;
         return {
             redirect: {
                 permanent: false,
@@ -738,10 +736,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         listID: authResponse.data.list_id
     }
 
-
+    isLogged = true
 
     return {
-        props: { userData, userCityForecast, citiesListForecast }, // Pass the entire response as a prop
+        props: { userData, userCityForecast, citiesListForecast, isLogged }, // Pass the entire response as a prop
     };
 }
 

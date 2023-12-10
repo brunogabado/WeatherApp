@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useDispatch, useSelector } from 'react-redux'
 import { loginType, openModal } from '@/state/modal/modalSlice';
@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 import { RootState } from '@/state/store';
 import { clearUserState } from '@/state/user/userSlice';
 import { deleteCookie } from 'cookies-next';
+import { setIsLogged } from '@/state/user/userSlice';
+
 
 
 
@@ -109,9 +111,14 @@ border: none;
 const Header: React.FC = () => {
 
     const [extendNavbar, setExtendNavbar] = useState<boolean>(false)
-    const dispatch = useDispatch()
     const router = useRouter()
     const isLogged = useSelector((state: RootState) => state.user.isLogged)
+    const dispatch = useDispatch()
+
+    // useEffect(() => {
+    //     dispatch(setIsLogged())
+    //     setExtendNavbar(false)
+    // }, [])
 
     const handleLoginClick = () => {
         setExtendNavbar(false)

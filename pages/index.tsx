@@ -36,7 +36,7 @@ interface cityInfo {
 }
 
 interface homepageProp {
-    logged: boolean
+    isLogged: boolean
 }
 
 type dashboardDataObj = {
@@ -226,7 +226,7 @@ font-size: 1.4rem;
 `;
 //Homepage component
 
-const HomePage: React.FC<homepageProp> = ({ logged }) => {
+const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
 
 
     //redux actions
@@ -272,9 +272,9 @@ const HomePage: React.FC<homepageProp> = ({ logged }) => {
 
     useEffect(() => {
 
-        if (logged) {
-            dispatch(setIsLogged())
-        }
+        // if (logged) {
+        //     dispatch(setIsLogged())
+        // }
 
         const fetchData = async () => {
             try {
@@ -347,14 +347,14 @@ const HomePage: React.FC<homepageProp> = ({ logged }) => {
     }
 
     const onClickLogin = () => {
-        if (!logged) {
+        if (!isLogged) {
             dispatch(openModal())
             dispatch(loginType())
         }
     }
 
     const onClickRegister = () => {
-        if (!logged) {
+        if (!isLogged) {
             dispatch(openModal())
             dispatch(registerType())
         }
@@ -406,7 +406,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const cookieToken = context.req.headers.cookie || "";
     const parsedCookie = cookie.parse(cookieToken);
     const tokenInsideCookie = parsedCookie.userToken || "";
-    let logged = false
+    let isLogged = false
     let response;
 
     try {
@@ -422,13 +422,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     if (!cookieToken || response.status !== 200) {
         return {
-            props: { logged }
+            props: { isLogged }
         };
     }
-    logged = true
-    console.log(logged)
+    isLogged = true
+    console.log(isLogged)
     return {
-        props: { logged }, // Pass the entire response as a prop
+        props: { isLogged }, // Pass the entire response as a prop
     };
 }
 

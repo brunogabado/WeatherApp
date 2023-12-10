@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useDispatch, useSelector } from 'react-redux'
 import { loginType, openModal } from '@/state/modal/modalSlice';
@@ -141,6 +141,7 @@ const Header: React.FC = () => {
                     </svg>
                     <StyledTitleLogo>WeatherWise</StyledTitleLogo>
                 </LogoContainer>
+                
                 <Navbar>
                     <NavbarLink onClick={() => router.push("/")}>Home</NavbarLink>
                     <NavbarLink onClick={handleMyProfileClick}>My Profile</NavbarLink>

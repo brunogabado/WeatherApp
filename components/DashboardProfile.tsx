@@ -7,19 +7,24 @@ background: linear-gradient(180deg, rgba(87,167,209,1) 1%, rgba(255,255,255,1) 2
 border: 2px solid white;
 border-radius: 30px;
 padding: 20px;
-margin: 50px;
+margin: 50px 0;
 `
-const DashboardGrid = styled.div`
+const DashboardGridLeft = styled.div`
     display: grid;
     grid-template-rows: 1fr 1fr 1fr 1fr;
     width: 50%;
     justify-content: center;
     align-items: center;
     justify-items: center;
+    border-right: 1px solid white;
+`
+
+const DashboardGridRight = styled(DashboardGridLeft)`
+border-right: none;
 `
 const DashboardHeader = styled.div`
-display: grid;
-grid-template-columns: 1fr 1fr;
+display: flex;
+width: 100%;
 color: white;
 align-items: center;
 justify-content: center;
@@ -29,11 +34,20 @@ h4{
     text-align: center;
 }
 `
-const DashboardTitle = styled.h4`
+const DashboardTitleLeft = styled.h3`
 display: flex;
-font-size: 26px;
+min-width: 50%;
+margin:0;
+padding: 20px 0;
+font-size: 22px;
 align-items: center;
 justify-content: center;
+padding-right: 10px;
+`
+const DashboardTitleRight = styled(DashboardTitleLeft)`
+padding-right: 0;
+padding-left: 10px;
+border-left: 1px solid white;
 `
 const DashboardIconBox = styled.div`
 display: flex;
@@ -104,12 +118,12 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
         <>
             <DashboardContainer>
                 <DashboardHeader>
-                    <DashboardTitle>{cityListData.name.split(",")[0]}</DashboardTitle>
-                    <DashboardTitle>{userCityData.name.split(",")[0]}</DashboardTitle>
+                    <DashboardTitleLeft>{cityListData.name.split(",")[0]}</DashboardTitleLeft>
+                    <DashboardTitleRight>{userCityData.name.split(",")[0]}</DashboardTitleRight>
                 </DashboardHeader>
                 <DashboardTable>
 
-                    <DashboardGrid>
+                    <DashboardGridLeft>
                         <DashboardHourBox>{cityListData.atualHour.split(" ")[1]}</DashboardHourBox>
                         <DashboardIconBox><img src={cityListData.cityWeather[day].day.condition.icon.split("/")[6]} /></DashboardIconBox>
                         <DashboardTempMaxBox>{cityListData.cityWeather[day].day.maxtemp_c}º</DashboardTempMaxBox>
@@ -121,10 +135,10 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
                                 <path opacity="0.7" d="M14.25 7.5C14.25 5.15279 16.1528 3.25 18.5 3.25C20.8472 3.25 22.75 5.15279 22.75 7.5C22.75 9.84721 20.8472 11.75 18.5 11.75H2C1.58579 11.75 1.25 11.4142 1.25 11C1.25 10.5858 1.58579 10.25 2 10.25H18.5C20.0188 10.25 21.25 9.01878 21.25 7.5C21.25 5.98122 20.0188 4.75 18.5 4.75C16.9812 4.75 15.75 5.98122 15.75 7.5V8C15.75 8.41421 15.4142 8.75 15 8.75C14.5858 8.75 14.25 8.41421 14.25 8V7.5Z" fill="#1C274C" />
                             </svg>{cityListData.cityWeather[day].day.maxwind_kph}km/h
                         </DashboardWindBox>
-                    </DashboardGrid>
+                    </DashboardGridLeft>
 
 
-                    <DashboardGrid>
+                    <DashboardGridRight>
                         <DashboardHourBox>{userCityData.atualHour.split(" ")[1]}</DashboardHourBox>
                         <DashboardIconBox><img src={userCityData.cityWeather[day].day.condition.icon.split("/")[6]} /></DashboardIconBox>
                         <DashboardTempMaxBox>{userCityData.cityWeather[day].day.maxtemp_c}º</DashboardTempMaxBox>
@@ -136,7 +150,7 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
                                 <path opacity="0.7" d="M14.25 7.5C14.25 5.15279 16.1528 3.25 18.5 3.25C20.8472 3.25 22.75 5.15279 22.75 7.5C22.75 9.84721 20.8472 11.75 18.5 11.75H2C1.58579 11.75 1.25 11.4142 1.25 11C1.25 10.5858 1.58579 10.25 2 10.25H18.5C20.0188 10.25 21.25 9.01878 21.25 7.5C21.25 5.98122 20.0188 4.75 18.5 4.75C16.9812 4.75 15.75 5.98122 15.75 7.5V8C15.75 8.41421 15.4142 8.75 15 8.75C14.5858 8.75 14.25 8.41421 14.25 8V7.5Z" fill="#1C274C" />
                             </svg>{userCityData.cityWeather[day].day.maxwind_kph}km/h
                         </DashboardWindBox>
-                    </DashboardGrid>
+                    </DashboardGridRight>
 
 
                 </DashboardTable>

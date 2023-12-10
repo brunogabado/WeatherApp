@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { GetServerSidePropsContext } from 'next';
 import styled from "styled-components";
 import axios, { Axios } from "axios";
@@ -6,6 +7,17 @@ import { getCookie } from 'cookies-next';
 import { useState, useEffect, useRef } from 'react';
 import SearchBarProfile from '@/components/SearchbarProfile';
 import DashboardProfile from '@/components/DashboardProfile';
+import { setIsLogged } from '@/state/user/userSlice';
+import { useDispatch } from 'react-redux';
+import { Snackbar } from '@mui/material/';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+    props,
+    ref,
+) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const ProfilePageContainer = styled.div`
     display: flex;
@@ -151,7 +163,6 @@ const DashBoardProfileSection = styled.div`
 display: flex;
 flex-direction: column;
 justify-content: center;
-gap: 30px;
 align-items: center;
 color: white;
 padding: 50px;
@@ -161,8 +172,18 @@ border-top-left-radius: 65px;
 border-top-right-radius: 65px;
 
 h2{
+    width: 100%;
+    padding: 10px;
     text-align: center;
+    border-bottom: 2px solid white;
 }
+
+
+@media (max-width: 500px) {
+width: calc(100% - 40px);
+ padding: 20px;
+}
+
 `
 const GridOfDashboards = styled.div`
 display: flex;
@@ -171,7 +192,12 @@ align-items: center;
 color: white;
 width: 100%;
 justify-content: center;
-margin: 50px 0;
+/* margin: 50px 0; */
+gap: 50px;
+
+@media (max-width: 500px) {
+ padding: 20px;
+}
 `
 const InfoContainer = styled.div`
     display: flex;
@@ -334,8 +360,6 @@ export type filteredForecastProps = {
     cityWeather: dataToRender[],
 }
 
-
-
 const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citiesListForecast }) => {
 
     //states
@@ -347,6 +371,8 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     const [userCityData, setUserCityData] = useState<filteredForecastProps | {}>({})
     const [citiesListData, setCitiesListData] = useState<filteredForecastProps[] | []>([])
 
+    const [alert, setAlert] = useState({ open: false, message: "", messageType: "" });
+    const dispatch = useDispatch()
     const userCookie = getCookie('userToken')
     const condition: boolean = Object.keys(userCityData).length === 0 || citiesListData.length === 0;
     const targetRef = useRef<HTMLDivElement>(null);
@@ -397,13 +423,43 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         getDaysOfSearch()
     }, [userCity, citiesListAllData])
 
+    useEffect(() => {
+        dispatch(setIsLogged())
+    })
     const handleNewDate = (day: number) => {
         setDayOfSearch(day)
         targetRef.current?.scrollIntoView({ behavior: 'smooth' })
+        setAlert({
+            open: true,
+            message: "Date of the comparison was changed",
+            messageType: "success"
+        })
+
+        setTimeout(() => {
+            setAlert({
+                open: false,
+                message: "",
+                messageType: "success"
+            })
+
+        }, 2000)
     }
 
     const handleAddingNewCity = async (city: CityProps) => {
         if (citiesList.length > 3 || citiesList.some(cityList => cityList.name === city.name)) {
+            setAlert({
+                open: true,
+                message: "List is full",
+                messageType: "error"
+            })
+
+            setTimeout(() => {
+                setAlert({
+                    open: false,
+                    message: "",
+                    messageType: "success"
+                })
+            }, 2000)
             return
         }
 
@@ -422,7 +478,20 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
             setCitiesList([...citiesList, city])
             console.log("response from xano: ", xanoResponse)
+            setAlert({
+                open: true,
+                message: "City added to the List",
+                messageType: "success"
+            })
 
+
+            setTimeout(() => {
+                setAlert({
+                    open: false,
+                    message: "",
+                    messageType: "success"
+                })
+            }, 2000)
         } catch (e) {
             console.log(e)
         }
@@ -447,6 +516,22 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             setCitiesList(newList)
             console.log(response)
 
+            setAlert({
+                open: true,
+                message: `${citiesList[index].name} deleted from the list !`,
+                messageType: "success"
+            })
+
+            setTimeout(() => {
+                setAlert({
+                    open: false,
+                    message: "",
+                    messageType: "success"
+                })
+
+            }, 2000)
+
+
         } catch (e) {
             console.log(e)
         }
@@ -466,6 +551,21 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             })
 
         setUserCity(newCity.data.userCity)
+        setAlert({
+            open: true,
+            message: "Your city was updated!",
+            messageType: "success"
+        })
+
+        setTimeout(() => {
+            setAlert({
+                open: false,
+                message: "",
+                messageType: "success"
+            })
+
+        }, 2000)
+
     }
 
     // console.log("citiesListAllData---", citiesListAllData)
@@ -475,6 +575,13 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
     return (
         <ProfilePageContainer>
+            {alert.message.length > 0 !== null && alert.messageType === "success" ?
+                <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={alert.open} autoHideDuration={6000}>
+                    <Alert severity="success" sx={{ width: '100%' }}>{alert.message}</Alert>
+                </Snackbar> :
+                <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={alert.open} autoHideDuration={6000}>
+                    <Alert severity="error" sx={{ width: '100%' }}>{alert.message}</Alert>
+                </Snackbar>}
             <InputsListContainer>
                 <ListContainer>
                     <h2>My List of cities</h2>
@@ -560,7 +667,6 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                 </BoxInfo>
             </InfoContainer>
 
-
             <DashBoardProfileSection ref={targetRef}>
                 {condition ?
                     <h2>You have not selected your city or the list is empty.</h2> :
@@ -631,6 +737,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         userList: authResponse.data.list.cities,
         listID: authResponse.data.list_id
     }
+
+
 
     return {
         props: { userData, userCityForecast, citiesListForecast }, // Pass the entire response as a prop

@@ -1,10 +1,20 @@
+import * as React from 'react';
 import styled from "styled-components";
+import { useState, useEffect } from 'react';
 import LoginForm from "./LoginModalForm";
 import RegisterForm from "./RegisterModalForm";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/state/store';
 import { closeModal } from '@/state/modal/modalSlice';
+import { Snackbar } from '@mui/material/';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const ModalContainer = styled.div`
   display: flex;
@@ -17,7 +27,7 @@ const ModalContainer = styled.div`
   background-color: rgba(41, 39, 39, 0.95);
   z-index: 7;
 
-  animation: fade 0.5s ease-in-out;
+  animation: fade 0s ease-in-out;
 
   @keyframes fade {
   from {
@@ -44,24 +54,59 @@ const ModalCard = styled.div`
   transform: translate(-50%, -50%);
 `
 
+export interface errorProps {
+  errorMessage: string,
+  errorType: string
+}
+
 const Modal: React.FC = () => {
 
-    const dispatch = useDispatch()
-    const typeForm = useSelector((state: RootState) => state.modal.type)
+  const dispatch = useDispatch()
+  const typeForm = useSelector((state: RootState) => state.modal.type)
+  const [errorToDisplay, setErrorToDisplay] = useState<errorProps | null>(null)
+  const [open, setOpen] = useState<boolean>(false)
 
-    const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation();
-    };
+  console.log('errorToDisplay: ', errorToDisplay)
 
-    return (
-        <>
-            <ModalContainer onClick={() => dispatch(closeModal())}>
-                <ModalCard onClick={stopPropagation}>
-                    {typeForm === 'login' ? <LoginForm /> : <RegisterForm />}
-                </ModalCard>
-            </ModalContainer>
-        </>
-    )
+  const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
+
+  useEffect(() => {
+    if (errorToDisplay?.errorType) {
+      setOpen(true)
+
+      setTimeout(function () {
+        setErrorToDisplay(null)
+        setOpen(false)
+      }, 6000);
+    }
+  }, [errorToDisplay])
+
+
+
+
+  return (
+    <>
+      {errorToDisplay !== null &&
+        errorToDisplay?.errorType === "success" &&
+        <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}  open={open} autoHideDuration={6000}>
+          <Alert severity="success" sx={{ width: '100%' }}>{errorToDisplay.errorMessage}</Alert>
+        </Snackbar> ||
+        errorToDisplay !== null && errorToDisplay?.errorType === "error" &&
+        <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}  open={open} autoHideDuration={6000}>
+          <Alert severity="error" sx={{ width: '100%' }}>{errorToDisplay.errorMessage}</Alert>
+        </Snackbar>}
+
+
+      <ModalContainer onClick={() => dispatch(closeModal())}>
+
+        <ModalCard onClick={stopPropagation}>
+          {typeForm === 'login' ? <LoginForm setErrorToDisplay={setErrorToDisplay} /> : <RegisterForm setErrorToDisplay={setErrorToDisplay} />}
+        </ModalCard>
+      </ModalContainer>
+    </>
+  )
 }
 
 export default Modal

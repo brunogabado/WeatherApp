@@ -6,6 +6,7 @@ import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { closeModal, loginType } from '@/state/modal/modalSlice';
 import { setUserName, setUserEmail, setIsLogged } from '@/state/user/userSlice';
+import { errorProps } from './Modal';
 
 
 export const FormCard = styled.div`
@@ -99,12 +100,14 @@ export const SuccessMessage = styled.p`
 color: green;
 `
 
+export interface FormProps {
+    setErrorToDisplay: (error: errorProps) => void;
+}
 
-const RegisterForm: React.FC = () => {
+const RegisterForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [submitRequest, setSubmitRequest] = useState({ isLoading: false, submitted: false, error: false, errorMessage: "" });
 
     const dispatch = useDispatch()
     const router = useRouter()
@@ -112,7 +115,6 @@ const RegisterForm: React.FC = () => {
     const onRegistSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
-            setSubmitRequest((prevSubmitRequest) => ({ ...prevSubmitRequest, isLoading: true, }));
 
             const registResponse = await axios.post("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/signup", { name, email, password })
             console.log(registResponse)
@@ -126,25 +128,19 @@ const RegisterForm: React.FC = () => {
             //store token in the cookie
             setCookie('userToken', registResponse.data.authToken);
 
-            setSubmitRequest({ error: false, isLoading: false, submitted: true, errorMessage: "" });
-            setTimeout(() => {
-                setSubmitRequest((prevSubmitRequest) => ({
-                    ...prevSubmitRequest,
-                    submitted: false,
-                }));
-            }, 4000);
-
             //store user info in redux state
             dispatch(setUserEmail(userInfo.data.email));
             dispatch(setUserName(userInfo.data.name));
             dispatch(setIsLogged())
-            dispatch(closeModal())
-
             //push user to the profile page
-            router.push('/Profile');
+
+            setTimeout(() => {
+                router.push('/Profile');
+                dispatch(closeModal())
+            }, 2000)
         } catch (err: any) {
-            console.log("error on regist submit: ", err)
-            setSubmitRequest({ error: true, isLoading: false, submitted: true, errorMessage: err.response.data.message });
+            console.log("error on regist submit: ", err.response.data.message)
+            setErrorToDisplay({ errorMessage: err.response.data.message, errorType: "error" })
         }
     }
 
@@ -178,9 +174,6 @@ const RegisterForm: React.FC = () => {
                     <FormStyledTitleLogo>WeatherWise</FormStyledTitleLogo>
                 </LogoContainerForm>
 
-                {submitRequest.error && <ErrorMessage>{submitRequest.errorMessage}</ErrorMessage>}
-                {!submitRequest.error && submitRequest.submitted && <SuccessMessage>Account created!</SuccessMessage>}
-                {submitRequest.isLoading && <p>Loading..</p>}
                 <FormContainer onSubmit={(event) => onRegistSubmit(event)}>
                     <FormInput required autoComplete="on" type='email' placeholder='email' onChange={(e) => setEmail(e.target.value)} />
                     <FormInput required autoComplete='on' placeholder='username' onChange={(e) => setName(e.target.value)} />

@@ -66,8 +66,6 @@ const Modal: React.FC = () => {
   const [errorToDisplay, setErrorToDisplay] = useState<errorProps | null>(null)
   const [open, setOpen] = useState<boolean>(false)
 
-  console.log('errorToDisplay: ', errorToDisplay)
-
   const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };

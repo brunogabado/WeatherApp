@@ -27,7 +27,7 @@ const LoginForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
             })
 
             //store token in the cookie
-            setCookie('userToken', loginResponse.data.authToken);
+            setCookie('userToken', loginResponse.data.authToken, { sameSite: 'none', secure: true });
 
             setErrorToDisplay({ errorMessage: `Welcome, ${userInfo.data.name}`, errorType: "success" })
 
@@ -45,7 +45,6 @@ const LoginForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
             }, 2000)
 
         } catch (err: any) {
-            console.log(err)
             console.log("error on login submit: ", err.response.data.message)
             setErrorToDisplay({ errorMessage: err.response.data.message, errorType: "error" })
         }

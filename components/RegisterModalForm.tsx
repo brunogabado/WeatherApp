@@ -117,7 +117,6 @@ const RegisterForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
         try {
 
             const registResponse = await axios.post("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/signup", { name, email, password })
-            console.log(registResponse)
             //store the token in the cookie(registResponse.data.authToken)
             const userInfo = await axios.get("https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/auth/me", {
                 headers: {
@@ -126,7 +125,8 @@ const RegisterForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
             })
 
             //store token in the cookie
-            setCookie('userToken', registResponse.data.authToken);
+            setCookie('userToken', registResponse.data.authToken, { sameSite: 'none', secure: true });
+            setErrorToDisplay({ errorMessage: `Welcome, ${userInfo.data.name}`, errorType: "success" })
 
             //store user info in redux state
             dispatch(setUserEmail(userInfo.data.email));

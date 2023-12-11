@@ -279,7 +279,6 @@ const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lon}&lon=${coordinates.lat}&appid=403a9c02b9a56c52b7c077f403577b67&units=metric`)
-                // console.log(response.data)
 
                 //objects with some arrays with the valeus for each day
                 const newTemperaturesObj: { [date: string]: number[] } = {};
@@ -426,7 +425,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         };
     }
     isLogged = true
-    console.log(isLogged)
     return {
         props: { isLogged }, // Pass the entire response as a prop
     };

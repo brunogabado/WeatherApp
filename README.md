@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+This website for the final project of the course is a weather app where you can search the forecast for 5 days with a 3-hour gap for any city. You can also do some comparisons between the city chosen by you and a list of cities also created by you.
+
+Landing page : The page where the user lands when opening the link to the website. On this page, there will be a small introduction to what the app can do. Will have a search bar for the user to search for a city and get the forecast for 5 days in a gap of 3 hours.
+
+Home page: To use the features on this page, the user needs to be logged in. When logged in, the user will have a search bar to add cities to a list (with a max of 4 cities) and an option to delete any of the cities inside it. Then there will be another search bar to change the user's city, which will be compared with all the cities inside the list. There will also be an opportunity to pick the date of the comparison. Below these inputs for the user, there will be some information for the user about the comparison, and at the end, in case we have a user city and a non-empty list, we will have tables with the comparisons
+
+
+
 ## Getting Started
 
 First, run the development server:

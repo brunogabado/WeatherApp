@@ -97,7 +97,6 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
 
     //function to handle the click in one of the options and call the function that get the forecast
     const handleOptionClick = (e: React.MouseEvent, index: number) => {
-        console.log(e)
         e.preventDefault()
         selectCity(autoCompleteList[index])
         setOpenList(!openList)

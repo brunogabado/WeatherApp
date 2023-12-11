@@ -8,6 +8,12 @@ border: 2px solid white;
 border-radius: 30px;
 padding: 20px;
 margin: 50px 0;
+
+@media (max-width: 500px) {
+transform: scale(0.8);
+margin: 0;
+padding: 0 20px;
+}
 `
 const DashboardGridLeft = styled.div`
     display: grid;
@@ -17,8 +23,8 @@ const DashboardGridLeft = styled.div`
     align-items: center;
     justify-items: center;
     border-right: 1px solid white;
+    border-bottom: 1px solid white;
 `
-
 const DashboardGridRight = styled(DashboardGridLeft)`
 border-right: none;
 `
@@ -92,7 +98,7 @@ display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
-padding: 5px;
+padding: 5px 5px 15px 5px;
 font-size: 20px;
 `
 const DashboardHourBox = styled.div`
@@ -106,6 +112,11 @@ const DashboardHourBox = styled.div`
     border-radius: 20px;
 font-weight: 600;
 `
+const DashboardFooterText = styled.p`
+font-size: 20px;
+font-weight: 600;
+text-align: center;
+`
 
 interface DashboardProfileProps {
     userCityData: filteredForecastProps,
@@ -114,6 +125,12 @@ interface DashboardProfileProps {
 }
 
 const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityListData, day }) => {
+
+    const hourDiference: number = Number(userCityData.atualHour.split(" ")[1].split(":")[0]) - Number(cityListData.atualHour.split(" ")[1].split(":")[0])
+    const avgTempUserCity = Number(userCityData.cityWeather[day].day.maxtemp_c + userCityData.cityWeather[day].day.maxtemp_c) / 2;
+    const avgTempCityList = Number(cityListData.cityWeather[day].day.maxtemp_c + cityListData.cityWeather[day].day.maxtemp_c) / 2;
+    const temperatureDiference = (Number(avgTempCityList) - Number(avgTempUserCity)).toFixed(1)
+
     return (
         <>
             <DashboardContainer>
@@ -122,7 +139,6 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
                     <DashboardTitleRight>{userCityData.name.split(",")[0]}</DashboardTitleRight>
                 </DashboardHeader>
                 <DashboardTable>
-
                     <DashboardGridLeft>
                         <DashboardHourBox>{cityListData.atualHour.split(" ")[1]}</DashboardHourBox>
                         <DashboardIconBox><img src={cityListData.cityWeather[day].day.condition.icon.split("/")[6]} /></DashboardIconBox>
@@ -151,10 +167,9 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
                             </svg>{userCityData.cityWeather[day].day.maxwind_kph}km/h
                         </DashboardWindBox>
                     </DashboardGridRight>
-
-
                 </DashboardTable>
-
+                <DashboardFooterText>{`Timezone diference : ${hourDiference}h`}</DashboardFooterText>
+                <DashboardFooterText>{`Average temp. diference: ${temperatureDiference}cº`}</DashboardFooterText>
             </DashboardContainer>
         </>
     )

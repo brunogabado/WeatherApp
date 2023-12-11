@@ -41,6 +41,11 @@ border-bottom-right-radius: 65px;
  flex-direction: column;
 padding-bottom: 60px;
 }
+
+@media (max-width: 500px) {
+border-bottom-left-radius: 35px;
+border-bottom-right-radius: 35px;
+}
 `
 const ListContainer = styled.div`
 display: flex;
@@ -52,6 +57,10 @@ border-radius: 25px;
 
 @media (max-width: 900px) {
 width: 100%;
+}
+
+@media (max-width: 500px) {
+transform: scale(0.8);
 }
 `
 const CityListBox = styled.div`
@@ -100,6 +109,10 @@ text-align: center;
     margin-top: 25px;
 padding-top: 25px;
 border-top: 1px solid white;
+}
+
+@media (max-width: 500px) {
+transform: scale(0.8);
 }
 `
 const DateButtonsContainer = styled.div`
@@ -182,6 +195,9 @@ h2{
 @media (max-width: 500px) {
 width: calc(100% - 40px);
  padding: 20px;
+border-top-left-radius: 35px;
+border-top-right-radius: 35px;
+
 }
 
 `
@@ -197,6 +213,7 @@ gap: 50px;
 
 @media (max-width: 500px) {
  padding: 20px;
+ gap: 0px;
 }
 `
 const InfoContainer = styled.div`
@@ -210,6 +227,10 @@ flex-direction: column;
 height: auto;
 align-items: center;
 gap: 50px;
+}
+
+@media (max-width: 500px) {
+gap: 0;
 }
 `
 const ImageInfo = styled.img`
@@ -274,6 +295,7 @@ svg{
 @media (max-width: 500px) {
  padding: 15px;
  width: 280px;
+transform: scale(0.8);
 }
 `
 const InfoHourIcon = styled.div`
@@ -372,11 +394,11 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     const [datesOfSearch, setDatesOfSearch] = useState<Date[]>([])
     const [userCityData, setUserCityData] = useState<filteredForecastProps | {}>({})
     const [citiesListData, setCitiesListData] = useState<filteredForecastProps[] | []>([])
+    const [alert, setAlert] = useState({ open: false, message: "", messageType: "" });
 
     const dispatch = useDispatch()
-    const [alert, setAlert] = useState({ open: false, message: "", messageType: "" });
     const userCookie = getCookie('userToken')
-    const condition: boolean = Object.keys(userCityData).length === 0 || citiesListData.length === 0;
+    const condition: boolean = userCity.name !== "" && citiesList.length !== 0;
     const targetRef = useRef<HTMLDivElement>(null);
     const options: DateTimeFormatOptions = {
         weekday: 'long',
@@ -397,7 +419,6 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                     cityWeather: [...city.forecast.forecastday]
                 }
             })
-            console.log("newArr", newArr)
             setCitiesListData(newArr)
         }
 
@@ -453,7 +474,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         if (citiesList.length > 3 || citiesList.some(cityList => cityList.name === city.name)) {
             setAlert({
                 open: true,
-                message: "List is full",
+                message: "List is full/City is already in the list",
                 messageType: "error"
             })
 
@@ -468,7 +489,6 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         }
 
         try {
-            console.log("citiesList: ", [...citiesList, city])
             const xanoResponse = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/lists/${userData.listID}`,
                 {
                     list_id: userData.listID,
@@ -479,9 +499,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
             const cityWeather = await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=6&aqi=no&alerts=no`);
             setCitiesListAllData([...citiesListAllData, cityWeather.data])
-
             setCitiesList([...citiesList, city])
-            console.log("response from xano: ", xanoResponse)
             setAlert({
                 open: true,
                 message: "City added to the List",
@@ -503,8 +521,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     }
 
     const handleDeleteCity = async (index: number) => {
-        console.log(index)
-        const newList = [...citiesList.slice(0, index), ...citiesList.slice(index + 1)]
+        const newList = citiesList.length === 1 ? [] : [...citiesList.slice(0, index), ...citiesList.slice(index + 1)]
 
         try {
             const response = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/lists/${userData.listID}`,
@@ -516,9 +533,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                 { headers: { Authorization: "Bearer " + userCookie } })
 
             setCitiesListAllData([...citiesListAllData.slice(0, index), ...citiesListAllData.slice(index + 1)])
-
             setCitiesList(newList)
-            console.log(response)
 
             setAlert({
                 open: true,
@@ -572,6 +587,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
     }
 
+
     return (
         <ProfilePageContainer>
             {alert.message.length > 0 !== null && alert.messageType === "success" ?
@@ -593,7 +609,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
                 </ListContainer>
                 <InputsContainer>
-                    <h2>My current city is {userCity.name}</h2>
+                    <h2>{userCity.name.length === 0 ? "Please, select your city to compare with the list:" : `My current city is ${userCity.name}`}</h2>
                     <SearchBarProfile handleNewInput={handleSetNewUserCity} />
                     <DateButtonsContainer>
                         {datesOfSearch.map((day, index) => {
@@ -668,15 +684,16 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             </InfoContainer>
 
             <DashBoardProfileSection ref={targetRef}>
-                {condition ?
-                    <h2>You have not selected your city or the list is empty.</h2> :
+                {!condition ? <h2>You have not selected your city or the list is empty.</h2> :
                     <h2>{dayOfSearch === 0 ? `Today, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString('en-US', options)}` :
                         dayOfSearch === 1 ? `Tomorrow, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString('en-US', options)}` :
                             datesOfSearch[dayOfSearch] instanceof Date ?
                                 new Date(datesOfSearch[dayOfSearch]).toLocaleDateString('en-US', options) : ''}</h2>}
-                <GridOfDashboards>
-                    {!condition && citiesListData.map((city, index) => <DashboardProfile key={index} userCityData={userCityData as filteredForecastProps} cityListData={city} day={dayOfSearch} />)}
-                </GridOfDashboards>
+
+                {condition &&
+                    <GridOfDashboards>
+                        {citiesListData.map((city, index) => <DashboardProfile key={index} userCityData={userCityData as filteredForecastProps} cityListData={city} day={dayOfSearch} />)}
+                    </GridOfDashboards>}
             </DashBoardProfileSection>
         </ProfilePageContainer>
     );
@@ -739,7 +756,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         userList: authResponse.data.list.cities,
         listID: authResponse.data.list_id
     }
-
     isLogged = true
 
     return {

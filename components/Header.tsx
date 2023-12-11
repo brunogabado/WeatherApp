@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useDispatch, useSelector } from 'react-redux'
-import { loginType, openModal } from '@/state/modal/modalSlice';
+import { loginType, openModal, closeModal } from '@/state/modal/modalSlice';
 import { useRouter } from 'next/router';
 import { RootState } from '@/state/store';
 import { clearUserState } from '@/state/user/userSlice';
@@ -112,6 +112,7 @@ const Header: React.FC = () => {
     const isLogged = useSelector((state: RootState) => state.user.isLogged)
     const dispatch = useDispatch()
 
+
     const handleLoginClick = () => {
         setExtendNavbar(false)
         dispatch(loginType())
@@ -129,11 +130,18 @@ const Header: React.FC = () => {
         setExtendNavbar(false)
     }
 
+    const handleHomeClick = () => {
+        if (extendNavbar) {
+            setExtendNavbar(false)
+        }
+        router.push("/")
+    }
+
     return (
         <>
             <HeaderContainer>
 
-                <LogoContainer onClick={() => router.push("/")}>
+                <LogoContainer onClick={handleHomeClick}>
                     <svg width="90px" height="90px" viewBox="0 0 800 1024"
                         version="1.1" xmlns="http://www.w3.org/2000/svg">
                         <path d="M621.7 451.6m-129.5 0a129.5 129.5 0 1 0 259 0 129.5 129.5 0 1 0-259 0Z" fill="#F4CE26" />
@@ -169,8 +177,8 @@ const Header: React.FC = () => {
             </HeaderContainer>
 
             {extendNavbar &&
-                <MobileNavbar suppressHydrationWarning>
-                    <MobileNavbarLink onClick={() => router.push("/")}>Home</MobileNavbarLink>
+                <MobileNavbar >
+                    <MobileNavbarLink onClick={handleHomeClick}>Home</MobileNavbarLink>
                     <MobileNavbarLink onClick={handleMyProfileClick}>My Profile</MobileNavbarLink>
                     {isLogged ? <MobileNavbarLink onClick={handleLogoutClick}>Logout</MobileNavbarLink> : <MobileNavbarLink onClick={handleLoginClick}>Login</MobileNavbarLink>}
                 </MobileNavbar>

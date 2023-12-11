@@ -718,7 +718,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
         if (authResponse.data.userCity) {
             const userCity = authResponse.data.userCity
-            const userCityData = await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${userCity.latitude},${userCity.longitude}&days=6&aqi=no&alerts=no`)
+            const userCityData = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${userCity.latitude},${userCity.longitude}&days=6&aqi=no&alerts=no`)
             userCityForecast = userCityData.data
         }
 

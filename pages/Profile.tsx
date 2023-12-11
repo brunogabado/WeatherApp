@@ -497,9 +497,10 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
                 { headers: { Authorization: "Bearer " + userCookie } })
 
-            const cityWeather = await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=6&aqi=no&alerts=no`);
-            setCitiesListAllData([...citiesListAllData, cityWeather.data])
-            setCitiesList([...citiesList, city])
+            const cityWeather = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=3&aqi=no&alerts=no`);
+
+            setCitiesListAllData(prevData => [...prevData, cityWeather.data]);
+            setCitiesList(prevList => [...prevList, city]);
             setAlert({
                 open: true,
                 message: "City added to the List",

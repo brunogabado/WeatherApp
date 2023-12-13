@@ -48,11 +48,10 @@ padding: 20px 0;
 font-size: 22px;
 align-items: center;
 justify-content: center;
-padding-right: 10px;
+text-align: center;
 `
 const DashboardTitleRight = styled(DashboardTitleLeft)`
 padding-right: 0;
-padding-left: 10px;
 border-left: 1px solid white;
 `
 const DashboardIconBox = styled.div`
@@ -169,7 +168,7 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
                     </DashboardGridRight>
                 </DashboardTable>
                 <DashboardFooterText>{`Timezone diference : ${hourDiference}h`}</DashboardFooterText>
-                <DashboardFooterText>{`Average temp. diference: ${temperatureDiference}cº`}</DashboardFooterText>
+                <DashboardFooterText>{`Average temp. diference: ${temperatureDiference}ºC`}</DashboardFooterText>
             </DashboardContainer>
         </>
     )

@@ -7,7 +7,7 @@ const DashboardContainer = styled.div`
 display: flex;
 margin: 50px 0;
 border-radius: 20px;
-animation: slidein 1s ease-in-out;
+animation: slidein 1.5s ease-in-out;
 
 @keyframes slidein {
     from {
@@ -669,7 +669,7 @@ const Dashboard: React.FC<dashboardProps> = ({ temperaturesArr, iconsArr, dashbo
     const fullDate = new Date(dashboardData.date);
     const weekDay = fullDate.toLocaleDateString('en-US', { weekday: 'long' });
     const localAdress = dashboardData.cityName.split(",")
-    const cityAbrName = localAdress[0] + "," + localAdress[1]
+    const cityAbrName = localAdress[0]
 
     return (
         <DashboardContainer>

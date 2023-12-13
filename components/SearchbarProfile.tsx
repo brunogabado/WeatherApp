@@ -44,8 +44,9 @@ const SearchBarProfile: React.FC<searchbarProps> = ({ handleNewInput }) => {
     //setting a Ref to control the calls to the searchCity function. Doing this we are controlling the request to the api.
     const timeoutRef = useRef<number | null>(null);
 
-    //searchCity api:
+    const searchInputReference = document.getElementById('searchInput') as HTMLInputElement | null
 
+    //searchCity api:
     const searchCity = async (city: string) => {
         try {
             //Search cities by name to get a list to do an autocomplete.
@@ -96,10 +97,15 @@ const SearchBarProfile: React.FC<searchbarProps> = ({ handleNewInput }) => {
         e.preventDefault()
         handleNewInput(autoCompleteList[index])
         setOpenList(!openList)
+        if (searchInputReference !== null) {
+            searchInputReference.value = '';
+        } else {
+            console.error('Search input not found');
+        }
     }
     return (
         <FormList>
-            <SearchInput placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
+            <SearchInput id="searchInput" placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
             {openList &&
                 <List>
                     {autoCompleteList.map((city, index) => (<Option onClick={(event) => handleOptionClick(event, index)} key={index}>{city.name}</Option>))}

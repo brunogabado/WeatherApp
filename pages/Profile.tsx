@@ -388,12 +388,16 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
     //states
     const [citiesListAllData, setCitiesListAllData] = useState<cityForecastProps[]>(citiesListForecast)
+    const [citiesListFilteredData, setCitiesListFilteredData] = useState<filteredForecastProps[] | []>([])
     const [citiesList, setCitiesList] = useState<CityProps[] | []>(userData.userList)
+
+    const [userCityAllData, setUserCityAllData] = useState<cityForecastProps>(userCityForecast)
+    const [userCityFilteredData, setUserCityFilteredData] = useState<filteredForecastProps | {}>({})
     const [userCity, setUserCity] = useState<CityProps>(userData.userCity);
+
     const [dayOfSearch, setDayOfSearch] = useState<number>(0)
     const [datesOfSearch, setDatesOfSearch] = useState<Date[]>([])
-    const [userCityData, setUserCityData] = useState<filteredForecastProps | {}>({})
-    const [citiesListData, setCitiesListData] = useState<filteredForecastProps[] | []>([])
+
     const [alert, setAlert] = useState({ open: false, message: "", messageType: "" });
 
     const dispatch = useDispatch()
@@ -405,6 +409,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         day: 'numeric',
         month: 'long',
     };
+
 
 
     useEffect(() => {
@@ -419,18 +424,17 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                     cityWeather: [...city.forecast.forecastday]
                 }
             })
-            setCitiesListData(newArr)
+            setCitiesListFilteredData(newArr)
         }
 
-        if (userCityForecast) {
+        if (userCityAllData) {
             const newObj = {
                 name: userCity.name,
-                atualHour: userCityForecast.location.localtime,
-                cityWeather: [...userCityForecast.forecast.forecastday]
-
+                atualHour: userCityAllData.location.localtime,
+                cityWeather: [...userCityAllData.forecast.forecastday]
             }
 
-            setUserCityData(newObj)
+            setUserCityFilteredData(newObj)
         }
 
 
@@ -448,7 +452,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         }
         getDaysOfSearch()
 
-    }, [userCity, citiesListAllData])
+    }, [citiesListAllData, userCity])
 
 
     const handleNewDate = (day: number) => {
@@ -507,7 +511,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                 messageType: "success"
             })
 
-
+            targetRef.current?.scrollIntoView({ behavior: 'smooth' })
             setTimeout(() => {
                 setAlert({
                     open: false,
@@ -560,31 +564,40 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     }
 
     const handleSetNewUserCity = async (city: CityProps) => {
+        try {
+            const newCity = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/user/${userData.id}`,
+                { userCity: city },
+                {
+                    headers: {
+                        Authorization: "Bearer " + userCookie
+                    }
+                })
 
+            const userCityData = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=6&aqi=no&alerts=no`)
 
-        const newCity = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/user/${userData.id}`,
-            { userCity: city },
-            {
-                headers: {
-                    Authorization: "Bearer " + userCookie
-                }
-            })
+            setUserCityAllData(userCityData.data)
+            setUserCity(city)
+            targetRef.current?.scrollIntoView({ behavior: 'smooth' })
 
-        setUserCity(newCity.data.userCity)
-        setAlert({
-            open: true,
-            message: "Your city was updated!",
-            messageType: "success"
-        })
-
-        setTimeout(() => {
             setAlert({
-                open: false,
-                message: "",
+                open: true,
+                message: "Your city was updated!",
                 messageType: "success"
             })
 
-        }, 2000)
+            setTimeout(() => {
+                setAlert({
+                    open: false,
+                    message: "",
+                    messageType: "success"
+                })
+
+            }, 2000)
+
+
+        } catch (e) {
+            console.log(e)
+        }
 
     }
 
@@ -669,16 +682,16 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                             </svg>Icon with the state of the weather <br></br>(of the selected day)
                         </li>
 
-                        <li><InfoMaxTempIcon />Maximum Temperature <br></br>(of the selected day)</li>
+                        <li><InfoMaxTempIcon />Maximum Temperature ºC <br></br>(of the selected day)</li>
 
-                        <li><InfoMinTempIcon />Minimum Temperature <br></br>(of the selected day)</li>
+                        <li><InfoMinTempIcon />Minimum Temperature ºC<br></br>(of the selected day)</li>
 
                         <li>
                             <svg width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M6.25 5.5C6.25 3.70508 7.70507 2.25 9.5 2.25C11.2949 2.25 12.75 3.70507 12.75 5.5C12.75 7.29493 11.2949 8.75 9.5 8.75H3C2.58579 8.75 2.25 8.41421 2.25 8C2.25 7.58579 2.58579 7.25 3 7.25H9.5C10.4665 7.25 11.25 6.4665 11.25 5.5C11.25 4.5335 10.4665 3.75 9.5 3.75C8.5335 3.75 7.75 4.5335 7.75 5.5V5.85714C7.75 6.27136 7.41421 6.60714 7 6.60714C6.58579 6.60714 6.25 6.27136 6.25 5.85714V5.5Z" fill="#1C274C" />
                                 <path opacity="0.4" d="M3.25 14C3.25 13.5858 3.58579 13.25 4 13.25H18.5C20.8472 13.25 22.75 15.1528 22.75 17.5C22.75 19.8472 20.8472 21.75 18.5 21.75C16.1528 21.75 14.25 19.8472 14.25 17.5V17C14.25 16.5858 14.5858 16.25 15 16.25C15.4142 16.25 15.75 16.5858 15.75 17V17.5C15.75 19.0188 16.9812 20.25 18.5 20.25C20.0188 20.25 21.25 19.0188 21.25 17.5C21.25 15.9812 20.0188 14.75 18.5 14.75H4C3.58579 14.75 3.25 14.4142 3.25 14Z" fill="#1C274C" />
                                 <path opacity="0.7" d="M14.25 7.5C14.25 5.15279 16.1528 3.25 18.5 3.25C20.8472 3.25 22.75 5.15279 22.75 7.5C22.75 9.84721 20.8472 11.75 18.5 11.75H2C1.58579 11.75 1.25 11.4142 1.25 11C1.25 10.5858 1.58579 10.25 2 10.25H18.5C20.0188 10.25 21.25 9.01878 21.25 7.5C21.25 5.98122 20.0188 4.75 18.5 4.75C16.9812 4.75 15.75 5.98122 15.75 7.5V8C15.75 8.41421 15.4142 8.75 15 8.75C14.5858 8.75 14.25 8.41421 14.25 8V7.5Z" fill="#1C274C" />
-                            </svg>Maximum Wind Speed <br></br>(of the selected day)
+                            </svg>Maximum Wind Speed km/h <br></br>(of the selected day)
                         </li>
                     </ul>
                 </BoxInfo>
@@ -693,7 +706,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
                 {condition &&
                     <GridOfDashboards>
-                        {citiesListData.map((city, index) => <DashboardProfile key={index} userCityData={userCityData as filteredForecastProps} cityListData={city} day={dayOfSearch} />)}
+                        {citiesListFilteredData.map((city, index) => <DashboardProfile key={index} userCityData={userCityFilteredData as filteredForecastProps} cityListData={city} day={dayOfSearch} />)}
                     </GridOfDashboards>}
             </DashBoardProfileSection>
         </ProfilePageContainer>
@@ -718,8 +731,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
         if (authResponse.data.userCity) {
             const userCity = authResponse.data.userCity
-            const userCityData = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${userCity.latitude},${userCity.longitude}&days=6&aqi=no&alerts=no`)
-            userCityForecast = userCityData.data
+            const userCityFilteredData = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${userCity.latitude},${userCity.longitude}&days=6&aqi=no&alerts=no`)
+            userCityForecast = userCityFilteredData.data
         }
 
 

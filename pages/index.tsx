@@ -185,11 +185,22 @@ background-color: white;
 padding: 10px;
 border-radius: 25px;
 margin: 80px 0 ;
+animation: slidein 1.5s ease-in-out;
 
 @media (max-width: 500px) {
     flex-direction: column;
     width: 180px;
     align-items: center;
+  }
+
+  @keyframes slidein {
+    from {
+      transform: translateX(-200%);
+    }
+  
+    to {
+      transform: translateX(0%);
+    }
   }
 `
 
@@ -378,8 +389,8 @@ const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
 
                 {city &&
                     <DashboardIndex >
-                        <IconLabelBox><MaxTempIcon>Cº</MaxTempIcon>Maximum Temperature</IconLabelBox>
-                        <IconLabelBox><MinTempIcon>Cº</MinTempIcon>Minimum Temperature</IconLabelBox>
+                        <IconLabelBox><MaxTempIcon>ºC</MaxTempIcon>Maximum Temperature</IconLabelBox>
+                        <IconLabelBox><MinTempIcon>ºC</MinTempIcon>Minimum Temperature</IconLabelBox>
                         <IconLabelBox>
                             <svg width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M6.25 5.5C6.25 3.70508 7.70507 2.25 9.5 2.25C11.2949 2.25 12.75 3.70507 12.75 5.5C12.75 7.29493 11.2949 8.75 9.5 8.75H3C2.58579 8.75 2.25 8.41421 2.25 8C2.25 7.58579 2.58579 7.25 3 7.25H9.5C10.4665 7.25 11.25 6.4665 11.25 5.5C11.25 4.5335 10.4665 3.75 9.5 3.75C8.5335 3.75 7.75 4.5335 7.75 5.5V5.85714C7.75 6.27136 7.41421 6.60714 7 6.60714C6.58579 6.60714 6.25 6.27136 6.25 5.85714V5.5Z" fill="#1C274C" />

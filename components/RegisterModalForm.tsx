@@ -57,6 +57,12 @@ border: none;
 background-color: #57a7d1;
 background-size: cover;
 padding: 0;
+font-size: 22px;
+font-weight: 600;
+transition: 0.2s ease;
+&:hover{
+    transform: scale(1.2);
+}
 `
 export const FormStyledTitleLogo = styled.h1`
 font-size: 24px;
@@ -83,6 +89,10 @@ color: #57a7d1;
 font-weight: 600;
 margin-bottom: 15px;
 cursor: pointer;
+transition: 0.2s ease;
+&:hover{
+    transform: scale(1.2);
+}
 `
 export const CloseButton = styled.button`
 position: absolute;
@@ -92,6 +102,10 @@ padding: 0;
 align-self: end;
 margin: 20px;
 
+transition: 0.2s ease;
+&:hover{
+    transform: scale(1.3);
+}
 `
 export const ErrorMessage = styled.p`
 color: red;
@@ -182,7 +196,7 @@ const RegisterForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
                     <LinkLabel>Do you have an account?</LinkLabel>
                     <Link onClick={() => dispatch(loginType())}>LOGIN</Link>
 
-                    <SubmitButton type='submit'>Regist</SubmitButton>
+                    <SubmitButton type='submit'>REGIST</SubmitButton>
                 </FormContainer>
             </FormCard >
         </>

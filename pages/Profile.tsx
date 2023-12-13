@@ -321,7 +321,7 @@ interface ProfileProps {
   isLogged: boolean;
 }
 
-interface DateTimeFormatOptions {
+export interface DateTimeFormatOptions {
   weekday?: "long" | "short" | "narrow";
   month?: "numeric" | "2-digit" | "long" | "short" | "narrow";
   day?: "numeric" | "2-digit";

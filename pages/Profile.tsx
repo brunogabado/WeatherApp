@@ -387,17 +387,26 @@ export type filteredForecastProps = {
 const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citiesListForecast, isLogged }) => {
 
     //states
+
+    //state with the data of each city from the api
     const [citiesListAllData, setCitiesListAllData] = useState<cityForecastProps[]>(citiesListForecast)
+    //state only with the needed data to render
     const [citiesListFilteredData, setCitiesListFilteredData] = useState<filteredForecastProps[] | []>([])
+    //state with name and location params of each city of the list
     const [citiesList, setCitiesList] = useState<CityProps[] | []>(userData.userList)
 
+    //state with the user city data from the api
     const [userCityAllData, setUserCityAllData] = useState<cityForecastProps>(userCityForecast)
+    //state with the user city data only needed to render
     const [userCityFilteredData, setUserCityFilteredData] = useState<filteredForecastProps | {}>({})
+    //state with name and location of the user's city
     const [userCity, setUserCity] = useState<CityProps>(userData.userCity);
 
+    //state of the selected day index
     const [dayOfSearch, setDayOfSearch] = useState<number>(0)
+    //state with the availables dates
     const [datesOfSearch, setDatesOfSearch] = useState<Date[]>([])
-
+    //state with the alert state, type and message
     const [alert, setAlert] = useState({ open: false, message: "", messageType: "" });
 
     const dispatch = useDispatch()
@@ -411,11 +420,12 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     };
 
 
-
+    //state used to every time a city is added to the list or the user's city changed, update the data states
     useEffect(() => {
 
         dispatch(setIsLogged())
 
+        //if the list is not empty, add every city data needed to render into the filtered array.
         if (citiesListAllData.length > 0) {
             const newArr = citiesListAllData.map((city, index) => {
                 return {
@@ -427,6 +437,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             setCitiesListFilteredData(newArr)
         }
 
+        //if the user city is chosen, add the data needed to render into the filtered object
         if (userCityAllData) {
             const newObj = {
                 name: userCity.name,
@@ -437,7 +448,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             setUserCityFilteredData(newObj)
         }
 
-
+        //get the days of the search. (today, and next 2 days)
         const getDaysOfSearch = () => {
             const today = new Date()
 
@@ -451,19 +462,22 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             setDatesOfSearch(dates)
         }
         getDaysOfSearch()
-
+        //runs everytime the list change, or the usercity is changed 
     }, [citiesListAllData, userCity])
 
-
+    //function to handle a date change
     const handleNewDate = (day: number) => {
+        //set the new day index
         setDayOfSearch(day)
+        //send the user to the dashboard zone
         targetRef.current?.scrollIntoView({ behavior: 'smooth' })
+        //send an alert
         setAlert({
             open: true,
             message: "Date of the comparison was changed",
             messageType: "success"
         })
-
+        //remove the alert
         setTimeout(() => {
             setAlert({
                 open: false,
@@ -472,9 +486,11 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             })
 
         }, 2000)
-    }
+    };
 
+    //function to handle the add of a new city
     const handleAddingNewCity = async (city: CityProps) => {
+        //if the list is full or already has the city, send an alert and don't run the rest of the function
         if (citiesList.length > 3 || citiesList.some(cityList => cityList.name === city.name)) {
             setAlert({
                 open: true,
@@ -492,7 +508,12 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             return
         }
 
+        //try to change the list
         try {
+            //send a request to get the forecast od the new city
+            const cityWeather = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=3&aqi=no&alerts=no`);
+
+            //send an request to xano, to replace the list with a new one
             const xanoResponse = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/lists/${userData.listID}`,
                 {
                     list_id: userData.listID,
@@ -501,17 +522,21 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
                 { headers: { Authorization: "Bearer " + userCookie } })
 
-            const cityWeather = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=3&aqi=no&alerts=no`);
 
+            //set the weather data, and other params of the newcity into the indicated lists
             setCitiesListAllData(prevData => [...prevData, cityWeather.data]);
             setCitiesList(prevList => [...prevList, city]);
+
+            // sent the user to the dashboard zone 
+            targetRef.current?.scrollIntoView({ behavior: 'smooth' })
+
+            //set an alert if succed
             setAlert({
                 open: true,
                 message: "City added to the List",
                 messageType: "success"
             })
 
-            targetRef.current?.scrollIntoView({ behavior: 'smooth' })
             setTimeout(() => {
                 setAlert({
                     open: false,
@@ -520,15 +545,31 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                 })
             }, 2000)
         } catch (e) {
+            //console.log the error and set an alert in case of something gone wrong
             console.log(e)
-        }
 
+            setAlert({
+                open: true,
+                message: "Something gone wrong !",
+                messageType: "error"
+            })
+            setTimeout(() => {
+                setAlert({
+                    open: false,
+                    message: "",
+                    messageType: "success"
+                })
+            }, 2000)
+        }
     }
 
+    // function to delete a city from the list
     const handleDeleteCity = async (index: number) => {
+        //if the list have just 1 city, set the list as empty, if not, set a new array without the deleted city
         const newList = citiesList.length === 1 ? [] : [...citiesList.slice(0, index), ...citiesList.slice(index + 1)]
 
         try {
+            //send a request to xano, to replace the list with the new one
             const response = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/lists/${userData.listID}`,
                 {
                     list_id: userData.listID,
@@ -537,9 +578,12 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
                 { headers: { Authorization: "Bearer " + userCookie } })
 
+
+            //store the new array into the indicated states
             setCitiesListAllData([...citiesListAllData.slice(0, index), ...citiesListAllData.slice(index + 1)])
             setCitiesList(newList)
 
+            //send an alert if succeed
             setAlert({
                 open: true,
                 message: `${citiesList[index].name} deleted from the list !`,
@@ -563,8 +607,13 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
     }
 
+    //function to handle new user's city
     const handleSetNewUserCity = async (city: CityProps) => {
         try {
+            // requesting the weather data for the city
+            const userCityData = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=6&aqi=no&alerts=no`)
+
+            //requesting the xano to change the user's city in its database
             const newCity = await axios.patch(`https://x8ki-letl-twmt.n7.xano.io/api:5BvcM-Pn/user/${userData.id}`,
                 { userCity: city },
                 {
@@ -573,12 +622,14 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
                     }
                 })
 
-            const userCityData = await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=86ee320b28bc4482bf2183917232011&q=${city.latitude},${city.longitude}&days=6&aqi=no&alerts=no`)
-
+            //set the new user data into the indicated states
             setUserCityAllData(userCityData.data)
             setUserCity(city)
+
+            //sent the user to the dashboard zone
             targetRef.current?.scrollIntoView({ behavior: 'smooth' })
 
+            //send an alert if all succeeds
             setAlert({
                 open: true,
                 message: "Your city was updated!",
@@ -597,6 +648,22 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
         } catch (e) {
             console.log(e)
+
+            //send an alert if somthing gone wrong
+            setAlert({
+                open: true,
+                message: "Something gone wrong!",
+                messageType: "error"
+            })
+
+            setTimeout(() => {
+                setAlert({
+                    open: false,
+                    message: "",
+                    messageType: "success"
+                })
+
+            }, 2000)
         }
 
     }

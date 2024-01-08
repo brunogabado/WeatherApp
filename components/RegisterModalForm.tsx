@@ -39,7 +39,7 @@ gap: 20px;
 export const FormInput = styled.input`
 display: flex;
 align-items: center;
-text-align: center;
+/* text-align: center; */
 height: 40px;
 width: 300px;
 background-color: #ececec;
@@ -47,6 +47,10 @@ border: none;
 border-radius: 5px;
 margin: 8px 0;
 padding: 2px;
+
+&::placeholder {
+     text-align: center;
+  }
 `
 export const SubmitButton = styled.button`
 color: white;
@@ -153,7 +157,7 @@ const RegisterForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
                 dispatch(closeModal())
             }, 2000)
         } catch (err: any) {
-            console.log("error on regist submit: ", err.response.data.message)
+            console.log("error on register submit: ", err.response.data.message)
             setErrorToDisplay({ errorMessage: err.response.data.message, errorType: "error" })
         }
     }
@@ -196,7 +200,7 @@ const RegisterForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
                     <LinkLabel>Do you have an account?</LinkLabel>
                     <Link onClick={() => dispatch(loginType())}>LOGIN</Link>
 
-                    <SubmitButton type='submit'>REGIST</SubmitButton>
+                    <SubmitButton type='submit'>REGISTER</SubmitButton>
                 </FormContainer>
             </FormCard >
         </>

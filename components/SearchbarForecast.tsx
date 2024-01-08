@@ -13,14 +13,17 @@ export const Form = styled.form`
   }
 `;
 export const SearchInput = styled.input`
-  align-content: center;
-  text-align: center;
+padding-left: 10px;
   width: 100%;
   height: 40px;
   border-radius: 25px;
   background-color: #ececec;
   border: none;
   font-size: 16px;
+
+  &::placeholder {
+     text-align: center;
+  }
 `;
 export const List = styled.ul`
   height: 170px;

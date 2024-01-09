@@ -83,17 +83,11 @@ const Modal: React.FC = () => {
 
 
 
-
   return (
     <>
       {errorToDisplay !== null &&
-        errorToDisplay?.errorType === "success" &&
         <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}  open={open} autoHideDuration={6000}>
-          <Alert severity="success" sx={{ width: '100%' }}>{errorToDisplay.errorMessage}</Alert>
-        </Snackbar> ||
-        errorToDisplay !== null && errorToDisplay?.errorType === "error" &&
-        <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}  open={open} autoHideDuration={6000}>
-          <Alert severity="error" sx={{ width: '100%' }}>{errorToDisplay.errorMessage}</Alert>
+          <Alert severity={errorToDisplay?.errorType === "success" ? "success" : "error"} sx={{ width: '100%' }}>{errorToDisplay.errorMessage}</Alert>
         </Snackbar>}
 
 

@@ -11,6 +11,8 @@ import { setIsLogged } from "@/state/user/userSlice";
 import { useDispatch } from "react-redux";
 import { Snackbar } from "@mui/material/";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import InfoIcon from "@/components/icons/InfoIcon";
+import CloseIcon from "@/components/icons/CloseIcon";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -32,7 +34,7 @@ const InputsListContainer = styled.div`
   background-color: #57a7d1;
   border-bottom-left-radius: 65px;
   border-bottom-right-radius: 65px;
-
+  margin-bottom: 25px;
   @media (max-width: 900px) {
     width: calc(100% - 60px);
     flex-direction: column;
@@ -81,6 +83,18 @@ const CityListText = styled.p`
   color: white;
 `;
 const CityListButton = styled.button`
+  display: flex;
+  background-color: transparent;
+  border: none;
+
+  &:hover {
+    & svg {
+      transform: scale(1.2);
+      transition: transform 0.3s ease;
+    }
+  }
+`;
+const InfoDashBoardButton = styled.button`
   display: flex;
   background-color: transparent;
   border: none;
@@ -229,44 +243,28 @@ const ImageInfo = styled.img`
 const BoxInfo = styled.div`
   display: flex;
   flex-direction: column;
-  border: 2px solid black;
-  width: 400px;
+  background-color: white;
+  width: 300px;
+  margin: 20px 0 20px 0;
   padding: 30px;
   border-radius: 25px;
+  gap: 10px;
 
-  h2 {
-    @media (max-width: 500px) {
-      font-size: 16px;
-      width: 280px;
-    }
-  }
-
-  ul {
-    display: flex;
-    flex-direction: column;
-    font-size: 18px;
-    font-weight: 600;
-    height: 100%;
-    justify-content: space-between;
-    gap: 15px;
-    @media (max-width: 500px) {
-      padding: 0;
-      width: 280px;
-    }
-  }
   li {
     display: flex;
     align-items: center;
     gap: 15px;
+    font-size: 13px;
+    font-weight: 600;
 
     @media (max-width: 500px) {
-      transform: scale(0.8);
+      transform: scale(0.9);
     }
   }
 
   svg {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
   }
 
   @media (max-width: 1150px) {
@@ -282,9 +280,9 @@ const BoxInfo = styled.div`
 const InfoHourIcon = styled.div`
   display: flex;
   width: 45px;
-  height: 20px;
-  color: white;
-  border: 3px solid white;
+  height: 30px;
+  color: black;
+  border: 3px solid black;
   border-radius: 20px;
 `;
 const InfoMaxTempIcon = styled.div`
@@ -296,6 +294,48 @@ const InfoMaxTempIcon = styled.div`
 `;
 const InfoMinTempIcon = styled(InfoMaxTempIcon)`
   background-color: #a6f6ff;
+`;
+const InfoModalContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  background-color: rgba(41, 39, 39, 0.95);
+  z-index: 7;
+
+  animation: fade 0s ease-in-out;
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+`;
+const CloseInfoButton = styled.button`
+  border: none;
+  background: none;
+  padding: 0;
+  align-self: end;
+  margin: 10px;
+  width: 30px;
+  height: 30px;
+
+  transition: 0.2s ease;
+  &:hover {
+    transform: scale(1.3);
+  }
+
+  svg{
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 interface CityProps {
@@ -388,11 +428,16 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
   const [datesOfSearch, setDatesOfSearch] = useState<Date[]>([]);
   //state with the alert state, type and message
   const [alert, setAlert] = useState({ open: false, message: "", messageType: "" });
+  //state for infoModal
+  const [infoModalOpen, setInfoModalOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const userCookie = getCookie("userToken");
   const condition: boolean = userCity.name !== "" && citiesList.length !== 0;
   const targetRef = useRef<HTMLDivElement>(null);
+  const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
   const options: DateTimeFormatOptions = {
     weekday: "long",
     day: "numeric",
@@ -447,10 +492,10 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
   const handleNewDate = (day: number) => {
     //set the new day index
     setDayOfSearch(day);
+
     //send the user to the dashboard zone
     // targetRef.current?.scrollIntoView({ behavior: "smooth" });
 
-    //send an alert
     setAlert({
       open: true,
       message: "Date of the comparison was changed",
@@ -459,9 +504,8 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     //remove the alert
     setTimeout(() => {
       setAlert({
+        ...alert,
         open: false,
-        message: "",
-        messageType: "success",
       });
     }, 2000);
   };
@@ -480,7 +524,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         setAlert({
           open: false,
           message: "",
-          messageType: "success",
+          messageType: "error",
         });
       }, 2000);
 
@@ -538,7 +582,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         setAlert({
           open: false,
           message: "",
-          messageType: "success",
+          messageType: "error",
         });
       }, 2000);
     }
@@ -638,23 +682,27 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         setAlert({
           open: false,
           message: "",
-          messageType: "success",
+          messageType: "error",
         });
       }, 2000);
     }
   };
 
+  //function to Open info Modal
+  const openInfoModal = () => {
+    setInfoModalOpen(true);
+  };
+
+  //function to close the info modal
+  const closeInfoModal = () => {
+    setInfoModalOpen(false);
+  };
+
   return (
     <ProfilePageContainer>
-      {alert.message.length > 0 !== null && alert.messageType === "success" ? (
-        <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={alert.open} autoHideDuration={6000}>
-          <Alert severity="success" sx={{ width: "100%" }}>
-            {alert.message}
-          </Alert>
-        </Snackbar>
-      ) : (
-        <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={alert.open} autoHideDuration={6000}>
-          <Alert severity="error" sx={{ width: "100%" }}>
+      {alert.open && (
+        <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={alert.open} autoHideDuration={2500}>
+          <Alert severity={alert.messageType === "success" ? "success" : "error"} sx={{ width: "100%" }}>
             {alert.message}
           </Alert>
         </Snackbar>
@@ -710,11 +758,42 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         </InputsContainer>
       </InputsListContainer>
 
-      <InfoContainer>
-        <ImageInfo src="paperAirplane.png" />
-        <BoxInfo>
-          <h2>Get all the daily comparison between your city, and a list of cities created by yourself!</h2>
-          <ul>
+      <DashBoardProfileSection ref={targetRef}>
+        {!condition ? (
+          <h2>You have not selected your city or the list is empty.</h2>
+        ) : (
+          <h2>
+            {dayOfSearch === 0
+              ? `Today, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)}`
+              : dayOfSearch === 1
+              ? `Tomorrow, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)}`
+              : datesOfSearch[dayOfSearch] instanceof Date
+              ? new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)
+              : ""}
+          </h2>
+        )}
+
+        {condition && (
+          <>
+            <h3>Weather comparisons with your city, {userCity.name.split(",")[0]}</h3>
+            <InfoDashBoardButton onClick={openInfoModal}>
+              <InfoIcon />
+            </InfoDashBoardButton>
+            <GridOfDashboards>
+              {citiesListFilteredData.map((city, index) => (
+                <DashboardProfile key={index} userCityData={userCityFilteredData as filteredForecastProps} cityListData={city} day={dayOfSearch} />
+              ))}
+            </GridOfDashboards>
+          </>
+        )}
+      </DashBoardProfileSection>
+
+      {infoModalOpen && (
+        <InfoModalContainer onClick={closeInfoModal}>
+          <BoxInfo onClick={stopPropagation}>
+            <CloseInfoButton onClick={closeInfoModal}>
+              <CloseIcon />
+            </CloseInfoButton>
             <li>
               <InfoHourIcon />
               Local hour (at the moment)
@@ -850,36 +929,9 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
               </svg>
               Maximum Wind Speed km/h <br></br>(of the selected day)
             </li>
-          </ul>
-        </BoxInfo>
-      </InfoContainer>
-
-      <DashBoardProfileSection ref={targetRef}>
-        {!condition ? (
-          <h2>You have not selected your city or the list is empty.</h2>
-        ) : (
-          <h2>
-            {dayOfSearch === 0
-              ? `Today, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)}`
-              : dayOfSearch === 1
-              ? `Tomorrow, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)}`
-              : datesOfSearch[dayOfSearch] instanceof Date
-              ? new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)
-              : ""}
-          </h2>
-        )}
-
-        {condition && (
-          <>
-            <h3>Weather comparisons with your city, {userCity.name.split(",")[0]}</h3>
-            <GridOfDashboards>
-              {citiesListFilteredData.map((city, index) => (
-                <DashboardProfile key={index} userCityData={userCityFilteredData as filteredForecastProps} cityListData={city} day={dayOfSearch} />
-              ))}
-            </GridOfDashboards>
-          </>
-        )}
-      </DashBoardProfileSection>
+          </BoxInfo>
+        </InfoModalContainer>
+      )}
     </ProfilePageContainer>
   );
 };

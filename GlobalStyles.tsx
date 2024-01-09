@@ -20,8 +20,13 @@ html {
     font-family: 'Quicksand', sans-serif;
   }
 
- button, p, div{
+  p, div{
   font-family: 'Noto Sans', sans-serif;
+ }
+
+ button{
+  font-family: 'Noto Sans', sans-serif;
+  cursor: pointer;
  }
 
 `;

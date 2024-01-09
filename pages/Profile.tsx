@@ -448,7 +448,8 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     //set the new day index
     setDayOfSearch(day);
     //send the user to the dashboard zone
-    targetRef.current?.scrollIntoView({ behavior: "smooth" });
+    // targetRef.current?.scrollIntoView({ behavior: "smooth" });
+
     //send an alert
     setAlert({
       open: true,
@@ -508,7 +509,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
       setCitiesList((prevList) => [...prevList, city]);
 
       // sent the user to the dashboard zone
-      targetRef.current?.scrollIntoView({ behavior: "smooth" });
+      // targetRef.current?.scrollIntoView({ behavior: "smooth" });
 
       //set an alert if succed
       setAlert({
@@ -607,7 +608,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
       setUserCity(city);
 
       //sent the user to the dashboard zone
-      targetRef.current?.scrollIntoView({ behavior: "smooth" });
+      // targetRef.current?.scrollIntoView({ behavior: "smooth" });
 
       //send an alert if all succeeds
       setAlert({
@@ -712,7 +713,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
       <InfoContainer>
         <ImageInfo src="paperAirplane.png" />
         <BoxInfo>
-          <h2>Get all the daily comparison between your city, and a list created by yourself!</h2>
+          <h2>Get all the daily comparison between your city, and a list of cities created by yourself!</h2>
           <ul>
             <li>
               <InfoHourIcon />
@@ -869,11 +870,14 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
         )}
 
         {condition && (
-          <GridOfDashboards>
-            {citiesListFilteredData.map((city, index) => (
-              <DashboardProfile key={index} userCityData={userCityFilteredData as filteredForecastProps} cityListData={city} day={dayOfSearch} />
-            ))}
-          </GridOfDashboards>
+          <>
+            <h3>Weather comparisons with your city, {userCity.name.split(",")[0]}</h3>
+            <GridOfDashboards>
+              {citiesListFilteredData.map((city, index) => (
+                <DashboardProfile key={index} userCityData={userCityFilteredData as filteredForecastProps} cityListData={city} day={dayOfSearch} />
+              ))}
+            </GridOfDashboards>
+          </>
         )}
       </DashBoardProfileSection>
     </ProfilePageContainer>

@@ -15,6 +15,7 @@ const CloseIcon:React.FC = () => {
         </g>
       </g>
     </svg>
+    
   );
 };
 

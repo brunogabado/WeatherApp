@@ -12,7 +12,10 @@ import { useDispatch } from "react-redux";
 import { Snackbar } from "@mui/material/";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import InfoIcon from "@/components/icons/InfoIcon";
-import CloseIcon from "@/components/icons/CloseIcon";
+import CloseIcon from "@/components/icons/CloseFormIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
+import WeatherIcon from "@/components/icons/WeatherIcon";
+import WindIcon from "@/components/icons/WindIcon";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -211,23 +214,6 @@ const GridOfDashboards = styled.div`
     gap: 0px;
   }
 `;
-const InfoContainer = styled.div`
-  display: flex;
-  padding: 50px;
-  width: calc(100% - 100px);
-  justify-content: space-around;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-    height: auto;
-    align-items: center;
-    gap: 50px;
-  }
-
-  @media (max-width: 500px) {
-    gap: 0;
-  }
-`;
 const ImageInfo = styled.img`
   width: 600px;
   transform: rotate(10deg);
@@ -241,6 +227,10 @@ const ImageInfo = styled.img`
   }
 `;
 const BoxInfo = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   background-color: white;
@@ -332,7 +322,7 @@ const CloseInfoButton = styled.button`
     transform: scale(1.3);
   }
 
-  svg{
+  svg {
     width: 20px;
     height: 20px;
   }
@@ -719,16 +709,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
               <CityListBox key={index}>
                 <CityListText>{country.name}</CityListText>
                 <CityListButton value={index} onClick={() => handleDeleteCity(index)}>
-                  <svg key="11" width="30px" height="30px" viewBox="0 0 1024 1024" className="icon" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z"
-                      fill="#3688FF"
-                    />
-                    <path
-                      d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z"
-                      fill="#5F6379"
-                    />
-                  </svg>
+                  <TrashIcon />
                 </CityListButton>
               </CityListBox>
             ))
@@ -800,101 +781,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             </li>
 
             <li>
-              <svg key="1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64">
-                <defs>
-                  <linearGradient id="a" x1="16.5" y1="19.67" x2="21.5" y2="28.33" gradientUnits="userSpaceOnUse">
-                    <stop offset="0" stopColor="#fbbf24" />
-                    <stop offset="0.45" stopColor="#fbbf24" />
-                    <stop offset="1" stopColor="#f59e0b" />
-                  </linearGradient>
-                  <linearGradient id="b" x1="22.56" y1="21.96" x2="39.2" y2="50.8" gradientUnits="userSpaceOnUse">
-                    <stop offset="0" stopColor="#f3f7fe" />
-                    <stop offset="0.45" stopColor="#f3f7fe" />
-                    <stop offset="1" stopColor="#deeafb" />
-                  </linearGradient>
-                  <linearGradient id="c" x1="22.53" y1="42.95" x2="25.47" y2="48.05" gradientUnits="userSpaceOnUse">
-                    <stop offset="0" stopColor="#4286ee" />
-                    <stop offset="0.45" stopColor="#4286ee" />
-                    <stop offset="1" stopColor="#0950bc" />
-                  </linearGradient>
-                  <linearGradient id="d" x1="29.53" y1="42.95" x2="32.47" y2="48.05" xlinkHref="#c" />
-                  <linearGradient id="e" x1="36.53" y1="42.95" x2="39.47" y2="48.05" xlinkHref="#c" />
-                </defs>
-                <circle cx="19" cy="24" r="5" stroke="#f8af18" strokeMiterlimit="10" strokeWidth="0.5" fill="#fbbf24" />
-                <path
-                  d="M19,15.67V12.5m0,23V32.33m5.89-14.22,2.24-2.24M10.87,32.13l2.24-2.24m0-11.78-2.24-2.24M27.13,32.13l-2.24-2.24M7.5,24h3.17M30.5,24H27.33"
-                  fill="none"
-                  stroke="#fbbf24"
-                  strokeLinecap="round"
-                  strokeMiterlimit="10"
-                  strokeWidth="2"
-                >
-                  <animateTransform attributeName="transform" type="rotate" values="0 19 24; 360 19 24" dur="45s" repeatCount="indefinite" />
-                </path>
-                <path
-                  d="M46.5,31.5l-.32,0a10.49,10.49,0,0,0-19.11-8,7,7,0,0,0-10.57,6,7.21,7.21,0,0,0,.1,1.14A7.5,7.5,0,0,0,18,45.5a4.19,4.19,0,0,0,.5,0v0h28a7,7,0,0,0,0-14Z"
-                  stroke="#e6effc"
-                  strokeMiterlimit="10"
-                  strokeWidth="0.5"
-                  fill="url(#b)"
-                />
-                <line
-                  x1="24.39"
-                  y1="43.03"
-                  x2="23.61"
-                  y2="47.97"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeMiterlimit="10"
-                  strokeWidth="2"
-                  stroke="url(#c)"
-                >
-                  <animateTransform attributeName="transform" type="translate" values="1 -5; -2 10" dur="0.7s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0;1;1;0" dur="0.7s" repeatCount="indefinite" />
-                </line>
-                <line
-                  x1="31.39"
-                  y1="43.03"
-                  x2="30.61"
-                  y2="47.97"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeMiterlimit="10"
-                  strokeWidth="2"
-                  stroke="url(#d)"
-                >
-                  <animateTransform
-                    attributeName="transform"
-                    begin="-0.4s"
-                    type="translate"
-                    values="1 -5; -2 10"
-                    dur="0.7s"
-                    repeatCount="indefinite"
-                  />
-                  <animate attributeName="opacity" begin="-0.4s" values="0;1;1;0" dur="0.7s" repeatCount="indefinite" />
-                </line>
-                <line
-                  x1="38.39"
-                  y1="43.03"
-                  x2="37.61"
-                  y2="47.97"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeMiterlimit="10"
-                  strokeWidth="2"
-                  stroke="url(#e)"
-                >
-                  <animateTransform
-                    attributeName="transform"
-                    begin="-0.2s"
-                    type="translate"
-                    values="1 -5; -2 10"
-                    dur="0.7s"
-                    repeatCount="indefinite"
-                  />
-                  <animate attributeName="opacity" begin="-0.2s" values="0;1;1;0" dur="0.7s" repeatCount="indefinite" />
-                </line>
-              </svg>
+              <WeatherIcon />
               Icon with the state of the weather <br></br>(of the selected day)
             </li>
 
@@ -909,24 +796,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
             </li>
 
             <li>
-              <svg width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M6.25 5.5C6.25 3.70508 7.70507 2.25 9.5 2.25C11.2949 2.25 12.75 3.70507 12.75 5.5C12.75 7.29493 11.2949 8.75 9.5 8.75H3C2.58579 8.75 2.25 8.41421 2.25 8C2.25 7.58579 2.58579 7.25 3 7.25H9.5C10.4665 7.25 11.25 6.4665 11.25 5.5C11.25 4.5335 10.4665 3.75 9.5 3.75C8.5335 3.75 7.75 4.5335 7.75 5.5V5.85714C7.75 6.27136 7.41421 6.60714 7 6.60714C6.58579 6.60714 6.25 6.27136 6.25 5.85714V5.5Z"
-                  fill="#1C274C"
-                />
-                <path
-                  opacity="0.4"
-                  d="M3.25 14C3.25 13.5858 3.58579 13.25 4 13.25H18.5C20.8472 13.25 22.75 15.1528 22.75 17.5C22.75 19.8472 20.8472 21.75 18.5 21.75C16.1528 21.75 14.25 19.8472 14.25 17.5V17C14.25 16.5858 14.5858 16.25 15 16.25C15.4142 16.25 15.75 16.5858 15.75 17V17.5C15.75 19.0188 16.9812 20.25 18.5 20.25C20.0188 20.25 21.25 19.0188 21.25 17.5C21.25 15.9812 20.0188 14.75 18.5 14.75H4C3.58579 14.75 3.25 14.4142 3.25 14Z"
-                  fill="#1C274C"
-                />
-                <path
-                  opacity="0.7"
-                  d="M14.25 7.5C14.25 5.15279 16.1528 3.25 18.5 3.25C20.8472 3.25 22.75 5.15279 22.75 7.5C22.75 9.84721 20.8472 11.75 18.5 11.75H2C1.58579 11.75 1.25 11.4142 1.25 11C1.25 10.5858 1.58579 10.25 2 10.25H18.5C20.0188 10.25 21.25 9.01878 21.25 7.5C21.25 5.98122 20.0188 4.75 18.5 4.75C16.9812 4.75 15.75 5.98122 15.75 7.5V8C15.75 8.41421 15.4142 8.75 15 8.75C14.5858 8.75 14.25 8.41421 14.25 8V7.5Z"
-                  fill="#1C274C"
-                />
-              </svg>
+              <WindIcon />
               Maximum Wind Speed km/h <br></br>(of the selected day)
             </li>
           </BoxInfo>

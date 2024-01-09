@@ -418,6 +418,7 @@ const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
       </DashboardContainer>
 
       {isOpen && <Modal />}
+
     </>
   );
 };

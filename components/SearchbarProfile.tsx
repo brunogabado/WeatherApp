@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import axios from "axios";
 import React, { useState, useRef } from "react";
-import { Form, List, SearchInput, Option } from "./SearchbarForecast";
+import { Form, List, SearchInput, SearchInputContainer, Option } from "./SearchbarForecast";
+import LoadingIcon from "./icons/LoadingIcon";
 
 interface cityProps {
   name: string;
@@ -34,9 +35,11 @@ const FormList = styled(Form)`
   }
 `;
 
+
 const SearchBarProfile: React.FC<searchbarProps> = ({ handleNewInput }) => {
   //useState to control the extend or not of the autoComplete dropdown div
   const [openList, setOpenList] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [autoCompleteList, setAutoCompleteList] = useState<cityProps[]>([]);
 
@@ -64,12 +67,13 @@ const SearchBarProfile: React.FC<searchbarProps> = ({ handleNewInput }) => {
     } catch (e) {
       console.log("error: ", e);
     }
+    setIsLoading(false);
   };
 
   //function to control the flow and call the autocompleteList
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-
+    setIsLoading(true);
     //if a timeout exists when we call this function, we clear before create a new one
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -84,6 +88,7 @@ const SearchBarProfile: React.FC<searchbarProps> = ({ handleNewInput }) => {
       } else {
         //open the autocomplete list/dropdown
         setOpenList(false);
+        setIsLoading(false);
       }
     }, 800);
   };
@@ -98,14 +103,17 @@ const SearchBarProfile: React.FC<searchbarProps> = ({ handleNewInput }) => {
 
     //cleaning the searchbar after the choose made
     if (searchInputsReferences.length > 0) {
-      searchInputsReferences.forEach((searchInput: HTMLInputElement) => searchInput.value = "");
+      searchInputsReferences.forEach((searchInput: HTMLInputElement) => (searchInput.value = ""));
     } else {
       console.error("Search input not found");
     }
   };
   return (
     <FormList>
-      <SearchInput className="searchInput" placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
+      <SearchInputContainer>
+        <SearchInput className="searchInput" placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
+        {isLoading && <LoadingIcon />}
+      </SearchInputContainer>
       {openList && (
         <List>
           {autoCompleteList.map((city, index) => (

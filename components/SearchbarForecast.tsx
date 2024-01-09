@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import React, { useState, useRef } from "react";
+import LoadingIcon from "./icons/LoadingIcon";
 
 export const Form = styled.form`
   width: 50%;
@@ -12,8 +13,16 @@ export const Form = styled.form`
     width: 100%;
   }
 `;
+
+export const SearchInputContainer = styled.div`
+  display: flex;
+  height: 42px;
+  border-radius: 25px;
+  background-color: #ececec;
+`;
+
 export const SearchInput = styled.input`
-padding-left: 10px;
+  padding-left: 10px;
   width: 100%;
   height: 40px;
   border-radius: 25px;
@@ -22,7 +31,7 @@ padding-left: 10px;
   font-size: 16px;
 
   &::placeholder {
-     text-align: center;
+    text-align: center;
   }
 `;
 export const List = styled.ul`
@@ -71,7 +80,7 @@ interface searchBarProps {
 const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, selectCity }) => {
   //useState to control the extend or not of the autoComplete dropdown div
   const [openList, setOpenList] = useState<boolean>(false);
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   //setting a Ref to control the calls to the searchCity function. Doing this we are controlling the request to the api.
   const timeoutRef = useRef<number | null>(null);
 
@@ -80,21 +89,23 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
   //function to control the flow and call the autocompleteList
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-
+    setIsLoading(true);
     //if a timeout exists when we call this function, we clear before create a new one
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     //creating a new timeout
-    timeoutRef.current = window.setTimeout(() => {
+    timeoutRef.current = window.setTimeout( async() => {
       if (e.target.value.length > 1) {
         setOpenList(true);
         //function where the api is
-        searchCity(e.target.value);
+        await searchCity(e.target.value);
+        setIsLoading(false)
       } else {
         //open the autocomplete list/dropdown
         setOpenList(false);
+        setIsLoading(false)
       }
     }, 800);
   };
@@ -104,6 +115,7 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
     e.preventDefault();
     selectCity(autoCompleteList[index]);
     setOpenList(!openList);
+    setIsLoading(false);
     if (searchInputReference !== null) {
       searchInputReference.value = "";
     } else {
@@ -112,7 +124,11 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
   };
   return (
     <Form>
-      <SearchInput className="searchInput" placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
+      <SearchInputContainer>
+        <SearchInput className="searchInput" placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
+        {isLoading && <LoadingIcon />}
+      </SearchInputContainer>
+
       {openList && (
         <List>
           {autoCompleteList.map((city, index) => (

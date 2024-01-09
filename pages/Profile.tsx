@@ -236,7 +236,7 @@ const BoxInfo = styled.div`
 
   h2 {
     @media (max-width: 500px) {
-      font-size: 19px;
+      font-size: 16px;
       width: 280px;
     }
   }
@@ -244,11 +244,11 @@ const BoxInfo = styled.div`
   ul {
     display: flex;
     flex-direction: column;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 600;
     height: 100%;
-    justify-content: space-around;
-
+    justify-content: space-between;
+    gap: 15px;
     @media (max-width: 500px) {
       padding: 0;
       width: 280px;

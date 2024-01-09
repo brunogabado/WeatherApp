@@ -140,7 +140,7 @@ const ButtonLog = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: black;
   height: 50px;
   width: 200px;
@@ -156,6 +156,7 @@ const ButtonLog = styled.button`
   @media (max-width: 500px) {
     width: 120px;
     height: 40px;
+    font-size: 1.0rem;
   }
 `;
 

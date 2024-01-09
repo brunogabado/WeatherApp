@@ -73,13 +73,13 @@ font-size: 24px;
 margin-top: 32px;
 display: flex;
 align-content: center;
+font-family: 'Pacifico', cursive;
 @media only screen and (max-width: 600px){
 	font-size: 16px
 }
 `
 export const LogoContainerForm = styled.div`
 display: flex;
-font-family: 'Bebas Neue', sans - serif;
 align-items: center;
 cursor: pointer;
 margin-top: 30px;

@@ -18,12 +18,13 @@ width: 100%;
 position: fixed;
 top: 0;
 z-index: 5;
+
 `
 const StyledTitleLogo = styled.h1`
 display: flex;
 align-content: center;
 margin-top: 40px;
-
+font-family: 'Pacifico', cursive;
 @media only screen and (max-width: 600px){
 	font-size: 18px
 }
@@ -31,7 +32,6 @@ margin-top: 40px;
 `
 const LogoContainer = styled.div`
 display: flex;
-font-family: 'Bebas Neue', sans-serif;
 align-items: center;
 cursor: pointer;
 `
@@ -56,13 +56,11 @@ width: 100%;
 const NavbarLink = styled.button`
 font-size: 20px;
 align-self: center;
-font-family: Arial, Helvetica, sans-serif;
 width: 120px;
 height: 40px;
 border: none;
 background: none;
 transition: 0.2s ease;
-
 &:hover {
     color: #57a7d1;
     font-size: 22px;
@@ -77,13 +75,11 @@ transition: 0.2s ease;
 const MobileNavbarLink = styled.button`
 font-size: 20px;
 align-self: center;
-font-family: Arial, Helvetica, sans-serif;
 width: 120px;
 height: 40px;
 border: none;
 background: none;
 transition: 0.7s ease;
-
 &:hover {
     color: #57a7d1;
     font-size: 18px;

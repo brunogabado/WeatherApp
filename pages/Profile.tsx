@@ -214,18 +214,6 @@ const GridOfDashboards = styled.div`
     gap: 0px;
   }
 `;
-const ImageInfo = styled.img`
-  width: 600px;
-  transform: rotate(10deg);
-
-  @media (max-width: 1150px) {
-    width: 400px;
-  }
-
-  @media (max-width: 500px) {
-    width: 280px;
-  }
-`;
 const BoxInfo = styled.div`
   position: absolute;
   top: 50%;
@@ -267,7 +255,7 @@ const BoxInfo = styled.div`
     transform: scale(0.8);
   }
 `;
-const InfoHourIcon = styled.div`
+export const InfoHourIcon = styled.div`
   display: flex;
   width: 45px;
   height: 30px;
@@ -275,14 +263,14 @@ const InfoHourIcon = styled.div`
   border: 3px solid black;
   border-radius: 20px;
 `;
-const InfoMaxTempIcon = styled.div`
+export const InfoMaxTempIcon = styled.div`
   display: flex;
   background-color: #ff9b50;
   width: 50px;
   height: 50px;
   border-radius: 50%;
 `;
-const InfoMinTempIcon = styled(InfoMaxTempIcon)`
+export const InfoMinTempIcon = styled(InfoMaxTempIcon)`
   background-color: #a6f6ff;
 `;
 const InfoModalContainer = styled.div`

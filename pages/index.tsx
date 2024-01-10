@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Dashboard, { MaxTempIcon, MinTempIcon } from "../components/Dashboard";
 import axios from "axios";
@@ -11,6 +11,9 @@ import { loginType, openModal, registerType } from "@/state/modal/modalSlice";
 import { setIsLogged } from "@/state/user/userSlice";
 import { RootState } from "@/state/store";
 import WindIcon from "@/components/icons/WindIcon";
+import { InfoHourIcon, InfoMaxTempIcon, InfoMinTempIcon } from "./Profile";
+import WeatherIcon from "@/components/icons/WeatherIcon";
+import CorrectIcon from "@/components/icons/CorrectIcon";
 
 /////interfaces
 
@@ -53,22 +56,21 @@ const StyledTitle = styled.h1`
   align-items: center;
   margin: 0;
   font-size: 2.8rem;
-  color: black;
+  color: white;
 
   @media (max-width: 500px) {
     font-size: 1.7rem;
   }
 `;
-
 export const MainContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
   padding: 7% 0;
-  background-color: #d8f2ff;
   z-index: 2;
   position: relative;
-  background-color: #d8f2ff;
+  background-color: #57a7d1;
+  color: white;
   margin: 90px 0 0 0;
   width: 100%;
 
@@ -77,7 +79,6 @@ export const MainContent = styled.div`
     gap: 30px;
   }
 `;
-
 const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -109,7 +110,6 @@ const InfoContainer = styled.div`
     font-size: 1rem;
   }
 `;
-
 const ImageInfo = styled.img`
   width: 600px;
 
@@ -121,7 +121,6 @@ const ImageInfo = styled.img`
     width: 300px;
   }
 `;
-
 const ButtonContainer = styled.div`
   display: flex;
   height: auto;
@@ -136,31 +135,31 @@ const ButtonContainer = styled.div`
     gap: 5px;
   }
 `;
-
 const ButtonLog = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.3rem;
-  color: black;
+  color: #468bbf;
   height: 50px;
   width: 200px;
-  background: #57a7d1;
+  background: #d8f2ff;
   border-radius: 8px;
+  border-color: white;
   cursor: pointer;
   transition: background 0.3s ease-in-out;
 
   &:hover {
+    color: white;
     background: #468bbf;
   }
 
   @media (max-width: 500px) {
     width: 120px;
     height: 40px;
-    font-size: 1.0rem;
+    font-size: 1rem;
   }
 `;
-
 const DashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -171,7 +170,6 @@ const DashboardContainer = styled.div`
   border-top-left-radius: 65px;
   border-top-right-radius: 65px;
 `;
-
 const DashboardIndex = styled.div`
   display: flex;
   gap: 15px;
@@ -197,7 +195,6 @@ const DashboardIndex = styled.div`
     }
   }
 `;
-
 const IconLabelBox = styled.div`
   display: grid;
   grid-template-rows: 1fr 1.5fr;
@@ -215,7 +212,6 @@ const IconLabelBox = styled.div`
     gap: 0px;
   }
 `;
-
 const SearchTitle = styled.h3`
   margin: 0;
   font-size: 1.8rem;
@@ -225,6 +221,120 @@ const SearchTitle = styled.h3`
 
   @media (max-width: 500px) {
     font-size: 1.4rem;
+  }
+
+  @media (max-width: 450px) {
+    font-size: 1.1rem;
+  }
+`;
+const ExplainInfoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  justify-content: space-around;
+  z-index: 2;
+  position: relative;
+  padding: 25px;
+
+  @media (max-width: 850px) {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  svg {
+    min-width: 50px;
+  }
+`;
+const LinkForecastContainer = styled.div`
+  display: flex;
+  text-align: center;
+  color: white;
+  justify-content: center;
+  background-color: #57a7d1;
+`;
+const LinkForecast = styled.h2`
+  margin: 0 0 40px 0;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    color: white;
+    transform: scale(1.2);
+  }
+
+  @media (max-width: 450px) {
+    font-size: 14px;
+  }
+`;
+const BoxImageInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 300px;
+  margin: 20px 0 20px 0;
+  padding: 30px;
+  border-radius: 25px;
+  gap: 10px;
+  margin: 0;
+  border: 2px solid black;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 13px;
+    font-weight: 600;
+
+    @media (max-width: 500px) {
+      transform: scale(0.9);
+    }
+  }
+
+  svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  @media (max-width: 1150px) {
+    width: 300px;
+  }
+
+  @media (max-width: 500px) {
+    padding: 15px;
+    width: 280px;
+    transform: scale(0.8);
+  }
+`;
+const TextInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const ListFeatures = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  list-style-type: none;
+
+  @media (max-width: 450px) {
+  }
+`;
+const Feature = styled.li`
+  display: flex;
+  align-content: center;
+  font-family: "Noto Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+
+  @media (max-width: 450px) {
+    font-size: 15px;
+  }
+`;
+const FeaturesTitle = styled.h2`
+  text-align: center;
+  @media (max-width: 450px) {
+    font-size: 19px;
   }
 `;
 //Homepage component
@@ -242,6 +352,8 @@ const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
     iconsObj: {} as { [date: string]: string[] },
     dashboardExtraData: [] as dashboardDataObj[],
   });
+
+  const targetRef = useRef<HTMLDivElement>(null);
 
   //states of the dashboard
   const [autoCompleteList, setAutoCompleteList] = useState<cityInfo[]>([]);
@@ -369,7 +481,62 @@ const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
         </InfoContainer>
         <ImageInfo src="infoImg.png" />
       </MainContent>
-      <DashboardContainer>
+      <LinkForecastContainer>
+        <LinkForecast onClick={() => targetRef.current?.scrollIntoView({ behavior: "smooth" })}>
+          See here the forecast for the next 5 days
+        </LinkForecast>
+      </LinkForecastContainer>
+      <ExplainInfoContainer>
+        <ImageInfo src="paperAirplane.png" />
+        <TextInfoContainer>
+          <FeaturesTitle>Creating an account will give you access to these features:</FeaturesTitle>
+          <ListFeatures>
+            <Feature>
+              <CorrectIcon />
+              Create a list up to 4 cities
+            </Feature>
+            <Feature>
+              <CorrectIcon />
+              Choose your city to be compared
+            </Feature>
+            <Feature>
+              <CorrectIcon />
+              Choose between 3 days
+            </Feature>
+            <Feature>
+              <CorrectIcon />
+              Get the comparison about these weather conditions:
+            </Feature>
+            <BoxImageInfo>
+              <li>
+                <InfoHourIcon />
+                Local hour (at the moment)
+              </li>
+
+              <li>
+                <WeatherIcon />
+                Icon with the state of the weather <br></br>(of the selected day)
+              </li>
+
+              <li>
+                <InfoMaxTempIcon />
+                Maximum Temperature ºC <br></br>(of the selected day)
+              </li>
+
+              <li>
+                <InfoMinTempIcon />
+                Minimum Temperature ºC<br></br>(of the selected day)
+              </li>
+
+              <li>
+                <WindIcon />
+                Maximum Wind Speed km/h <br></br>(of the selected day)
+              </li>
+            </BoxImageInfo>
+          </ListFeatures>
+        </TextInfoContainer>
+      </ExplainInfoContainer>
+      <DashboardContainer ref={targetRef}>
         <SearchTitle>Search the forecast for 5 days at any location</SearchTitle>
         <SearchBar autoCompleteList={autoCompleteList} searchCity={searchCity} selectCity={selectCity} />
 
@@ -382,7 +549,7 @@ const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
               <MinTempIcon>ºC</MinTempIcon>Minimum Temperature
             </IconLabelBox>
             <IconLabelBox>
-             <WindIcon />
+              <WindIcon />
               Maximum Wind Speed (KM/H)
             </IconLabelBox>
           </DashboardIndex>
@@ -402,7 +569,6 @@ const HomePage: React.FC<homepageProp> = ({ isLogged }) => {
       </DashboardContainer>
 
       {isOpen && <Modal />}
-
     </>
   );
 };

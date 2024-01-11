@@ -215,7 +215,6 @@ const GridOfDashboards = styled.div`
   width: 100%;
   justify-content: space-around;
   /* margin: 50px 0; */
-  
 
   @media (max-width: 500px) {
     padding: 20px;
@@ -244,7 +243,7 @@ const BoxInfo = styled.div`
     font-weight: 600;
 
     @media (max-width: 500px) {
-      transform: scale(0.9);
+      /* transform: scale(0.9); */
     }
   }
 
@@ -258,9 +257,11 @@ const BoxInfo = styled.div`
   }
 
   @media (max-width: 500px) {
-    padding: 15px;
     width: 280px;
-    transform: scale(0.8);
+  }
+
+  @media (max-width: 400px) {
+    width: 250px;
   }
 `;
 export const InfoHourIcon = styled.div`
@@ -555,13 +556,12 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
           messageType: "success",
         });
       }, 2000);
-    } catch (e) {
+    } catch (error: any) {
       //console.log the error and set an alert in case of something gone wrong
-      console.log(e);
-
+      console.log("error on the add handle:", error);
       setAlert({
         open: true,
-        message: "Something gone wrong !",
+        message: "Something gone wrong! Problaby for exceed of requests. This is a experimental web app. Try again in 30 seconds",
         messageType: "error",
       });
       setTimeout(() => {
@@ -570,7 +570,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
           message: "",
           messageType: "error",
         });
-      }, 2000);
+      }, 5000);
     }
   };
 
@@ -609,8 +609,19 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
           messageType: "success",
         });
       }, 2000);
-    } catch (e) {
-      console.log(e);
+    } catch (error: any) {
+      setAlert({
+        open: true,
+        message: "Something gone wrong! Problaby for exceed of requests. This is an experimental web app. Try again in 30 seconds",
+        messageType: "error",
+      });
+      setTimeout(() => {
+        setAlert({
+          open: false,
+          message: "",
+          messageType: "error",
+        });
+      }, 5000);
     }
   };
 
@@ -660,17 +671,16 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
       //send an alert if somthing gone wrong
       setAlert({
         open: true,
-        message: "Something gone wrong!",
+        message: "Something gone wrong! Problaby for exceed of requests. This is an experimental web app. Try again in 30 seconds",
         messageType: "error",
       });
-
       setTimeout(() => {
         setAlert({
           open: false,
           message: "",
           messageType: "error",
         });
-      }, 2000);
+      }, 5000);
     }
   };
 
@@ -684,12 +694,10 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     setInfoModalOpen(false);
   };
 
-  console.log("filtereddata", userCityFilteredData);
-
   return (
     <ProfilePageContainer>
       {alert.open && (
-        <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={alert.open} autoHideDuration={2500}>
+        <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={alert.open} autoHideDuration={3500}>
           <Alert severity={alert.messageType === "success" ? "success" : "error"} sx={{ width: "100%" }}>
             {alert.message}
           </Alert>

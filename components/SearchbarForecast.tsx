@@ -13,14 +13,12 @@ export const Form = styled.form`
     width: 100%;
   }
 `;
-
 export const SearchInputContainer = styled.div`
   display: flex;
   height: 42px;
   border-radius: 25px;
   background-color: #ececec;
 `;
-
 export const SearchInput = styled.input`
   padding-left: 10px;
   width: 100%;
@@ -84,7 +82,7 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
   //setting a Ref to control the calls to the searchCity function. Doing this we are controlling the request to the api.
   const timeoutRef = useRef<number | null>(null);
 
-  const searchInputReference = document.getElementById("searchInput") as HTMLInputElement | null;
+  const searchInputReference = document.getElementById("searchInput2") as HTMLInputElement | null;
 
   //function to control the flow and call the autocompleteList
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,7 +123,7 @@ const SearchBar: React.FC<searchBarProps> = ({ autoCompleteList, searchCity, sel
   return (
     <Form>
       <SearchInputContainer>
-        <SearchInput className="searchInput" placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
+        <SearchInput id="searchInput2" placeholder="Search for a city..." onChange={(event) => handleInputChange(event)} />
         {isLoading && <LoadingIcon />}
       </SearchInputContainer>
 

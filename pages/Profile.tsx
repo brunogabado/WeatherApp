@@ -16,6 +16,7 @@ import CloseIcon from "@/components/icons/CloseFormIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
 import WeatherIcon from "@/components/icons/WeatherIcon";
 import WindIcon from "@/components/icons/WindIcon";
+import DashBoardUserCity from "@/components/DashboardUserCityProfile";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -99,8 +100,14 @@ const CityListButton = styled.button`
 `;
 const InfoDashBoardButton = styled.button`
   display: flex;
+  align-self: flex-end;
+  justify-self: center;
+  justify-content: center;
+  align-items: center;
   background-color: transparent;
   border: none;
+  left: 95%;
+  top: 95%;
 
   &:hover {
     & svg {
@@ -189,6 +196,7 @@ const DashBoardProfileSection = styled.div`
     width: 100%;
     padding: 10px;
     text-align: center;
+    margin-top: 0;
     border-bottom: 2px solid white;
   }
 
@@ -205,9 +213,9 @@ const GridOfDashboards = styled.div`
   align-items: center;
   color: white;
   width: 100%;
-  justify-content: center;
+  justify-content: space-around;
   /* margin: 50px 0; */
-  gap: 50px;
+  
 
   @media (max-width: 500px) {
     padding: 20px;
@@ -411,7 +419,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
 
   const dispatch = useDispatch();
   const userCookie = getCookie("userToken");
-  const condition: boolean = userCity.name !== "" && citiesList.length !== 0;
+  const condition: boolean = Object.keys(userCityFilteredData).length > 0 && citiesList.length !== 0;
   const targetRef = useRef<HTMLDivElement>(null);
   const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -676,6 +684,8 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
     setInfoModalOpen(false);
   };
 
+  console.log("filtereddata", userCityFilteredData);
+
   return (
     <ProfilePageContainer>
       {alert.open && (
@@ -728,26 +738,29 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
       </InputsListContainer>
 
       <DashBoardProfileSection ref={targetRef}>
+        <InfoDashBoardButton onClick={openInfoModal}>
+          <InfoIcon />
+        </InfoDashBoardButton>
         {!condition ? (
           <h2>You have not selected your city or the list is empty.</h2>
         ) : (
-          <h2>
-            {dayOfSearch === 0
-              ? `Today, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)}`
-              : dayOfSearch === 1
-              ? `Tomorrow, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)}`
-              : datesOfSearch[dayOfSearch] instanceof Date
-              ? new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)
-              : ""}
-          </h2>
+          <>
+            <h2>
+              {dayOfSearch === 0
+                ? `Today, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)}`
+                : dayOfSearch === 1
+                ? `Tomorrow, ${new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)}`
+                : datesOfSearch[dayOfSearch] instanceof Date
+                ? new Date(datesOfSearch[dayOfSearch]).toLocaleDateString("en-US", options)
+                : ""}
+            </h2>
+            <DashBoardUserCity userCityData={userCityFilteredData as filteredForecastProps} day={dayOfSearch} />
+            <h3>Weather comparisons with your city, {userCity.name.split(",")[0]}:</h3>
+          </>
         )}
 
         {condition && (
           <>
-            <h3>Weather comparisons with your city, {userCity.name.split(",")[0]}</h3>
-            <InfoDashBoardButton onClick={openInfoModal}>
-              <InfoIcon />
-            </InfoDashBoardButton>
             <GridOfDashboards>
               {citiesListFilteredData.map((city, index) => (
                 <DashboardProfile key={index} userCityData={userCityFilteredData as filteredForecastProps} cityListData={city} day={dayOfSearch} />

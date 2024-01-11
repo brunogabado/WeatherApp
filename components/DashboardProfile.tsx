@@ -2,8 +2,7 @@ import { filteredForecastProps } from "@/pages/Profile";
 import styled from "styled-components";
 import WindIcon from "./icons/WindIcon";
 
-const DashboardContainer = styled.div`
-  width: 300px;
+export const DashboardContainer = styled.div`
   background: linear-gradient(180deg, rgba(87, 167, 209, 1) 1%, rgba(255, 255, 255, 1) 200%);
   border: 2px solid white;
   border-radius: 30px;
@@ -16,20 +15,22 @@ const DashboardContainer = styled.div`
     padding: 0 20px;
   }
 `;
-const DashboardGridLeft = styled.div`
+export const DashboardGrid = styled.div`
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
-  width: 50%;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   justify-content: center;
   align-items: center;
   justify-items: center;
-  border-right: 1px solid white;
   border-bottom: 1px solid white;
+
+  @media (max-width: 450px) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+  }
 `;
-const DashboardGridRight = styled(DashboardGridLeft)`
-  border-right: none;
-`;
-const DashboardHeader = styled.div`
+export const DashboardHeader = styled.div`
   display: flex;
   width: 100%;
   color: white;
@@ -41,7 +42,7 @@ const DashboardHeader = styled.div`
     text-align: center;
   }
 `;
-const DashboardTitle = styled.h3`
+export const DashboardTitle = styled.h3`
   display: flex;
   min-width: 50%;
   margin: 0;
@@ -51,7 +52,7 @@ const DashboardTitle = styled.h3`
   justify-content: center;
   text-align: center;
 `;
-const DashboardIconBox = styled.div`
+export const DashboardIconBox = styled.div`
   display: flex;
   justify-content: center;
 
@@ -71,10 +72,10 @@ const DashboardIconBox = styled.div`
     }
   }
 `;
-const DashboardTable = styled.div`
+export const DashboardTable = styled.div`
   display: flex;
 `;
-const DashboardTempMaxBox = styled.div`
+export const DashboardTempMaxBox = styled.div`
   display: flex;
   color: black;
   justify-content: center;
@@ -85,10 +86,10 @@ const DashboardTempMaxBox = styled.div`
   height: 70px;
   border-radius: 50%;
 `;
-const DashboardTempMinBox = styled(DashboardTempMaxBox)`
+export const DashboardTempMinBox = styled(DashboardTempMaxBox)`
   background-color: #a6f6ff;
 `;
-const DashboardWindBox = styled.div`
+export const DashboardWindBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -96,7 +97,7 @@ const DashboardWindBox = styled.div`
   padding: 5px 5px 15px 5px;
   font-size: 20px;
 `;
-const DashboardHourBox = styled.div`
+export const DashboardHourBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,23 +131,10 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
     <>
       <DashboardContainer>
         <DashboardHeader>
-          <DashboardTitle>Compared to {cityListData.name.split(",")[0]}</DashboardTitle>
+          <DashboardTitle>{cityListData.name.split(",")[0]}</DashboardTitle>
         </DashboardHeader>
         <DashboardTable>
-          <DashboardGridLeft>
-            <DashboardHourBox>{userCityData.atualHour.split(" ")[1]}</DashboardHourBox>
-            <DashboardIconBox>
-              <img src={userCityData.cityWeather[day].day.condition.icon.split("/")[6]} />
-            </DashboardIconBox>
-            <DashboardTempMaxBox>{userCityData.cityWeather[day].day.maxtemp_c}º</DashboardTempMaxBox>
-            <DashboardTempMinBox>{userCityData.cityWeather[day].day.mintemp_c}º</DashboardTempMinBox>
-            <DashboardWindBox>
-              <WindIcon />
-              {userCityData.cityWeather[day].day.maxwind_kph}km/h
-            </DashboardWindBox>
-          </DashboardGridLeft>
-
-          <DashboardGridRight>
+          <DashboardGrid>
             <DashboardHourBox>{cityListData.atualHour.split(" ")[1]}</DashboardHourBox>
             <DashboardIconBox>
               <img src={cityListData.cityWeather[day].day.condition.icon.split("/")[6]} />
@@ -157,7 +145,7 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
               <WindIcon />
               {cityListData.cityWeather[day].day.maxwind_kph}km/h
             </DashboardWindBox>
-          </DashboardGridRight>
+          </DashboardGrid>
         </DashboardTable>
         <DashboardFooterText>{`Timezone diference : ${hourDiference > 0 ? "+" + hourDiference : hourDiference}h`}</DashboardFooterText>
         <DashboardFooterText>{`Average temp. diference: ${

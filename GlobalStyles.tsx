@@ -14,7 +14,7 @@ html {
     background-color: #d8f2ff;
   };
 
-  h1, h2, h3{
+  /* h1, h2, h3{
     font-family: 'Quicksand', sans-serif;
   }
 
@@ -25,7 +25,7 @@ html {
  button{
   font-family: 'Noto Sans', sans-serif;
   cursor: pointer;
- }
+ } */
 
 `;
 

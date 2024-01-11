@@ -31,11 +31,7 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" />
+
         </Head>
         <body>
           <Main />

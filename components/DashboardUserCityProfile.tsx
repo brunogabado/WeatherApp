@@ -32,19 +32,19 @@ const UserDashboardGrid = styled(DashboardGrid)`
 
 const DashBoardUserCity: React.FC<DashboardProfileProps> = ({ userCityData, day }) => {
   return (
-    <DashboardContainer>
+    <DashboardContainer data-testid="userCityDashboard">
       <DashboardHeader>
-        <DashboardTitle>Your city, {userCityData.name.split(",")[0]}</DashboardTitle>
+        <DashboardTitle data-testid="dashboardTitle">Your city, {userCityData.name.split(",")[0]}</DashboardTitle>
       </DashboardHeader>
       <DashboardTable>
         <UserDashboardGrid>
-          <DashboardHourBox>{userCityData.atualHour.split(" ")[1]}</DashboardHourBox>
-          <DashboardIconBox>
+          <DashboardHourBox data-testid="dashboardParam">{userCityData.atualHour.split(" ")[1]}</DashboardHourBox>
+          <DashboardIconBox data-testid="dashboardParam">
             <img src={userCityData.cityWeather[day].day.condition.icon.split("/")[6]} />
           </DashboardIconBox>
-          <DashboardTempMaxBox>{userCityData.cityWeather[day].day.maxtemp_c}º</DashboardTempMaxBox>
-          <DashboardTempMinBox>{userCityData.cityWeather[day].day.mintemp_c}º</DashboardTempMinBox>
-          <DashboardWindBox>
+          <DashboardTempMaxBox data-testid="dashboardParam">{userCityData.cityWeather[day].day.maxtemp_c}º</DashboardTempMaxBox>
+          <DashboardTempMinBox data-testid="dashboardParam">{userCityData.cityWeather[day].day.mintemp_c}º</DashboardTempMinBox>
+          <DashboardWindBox data-testid="dashboardParam">
             <WindIcon />
             {userCityData.cityWeather[day].day.maxwind_kph}km/h
           </DashboardWindBox>

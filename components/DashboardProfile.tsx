@@ -129,19 +129,19 @@ const DashboardProfile: React.FC<DashboardProfileProps> = ({ userCityData, cityL
 
   return (
     <>
-      <DashboardContainer>
+      <DashboardContainer data-testid="comparisonDashboard">
         <DashboardHeader>
-          <DashboardTitle>{cityListData.name.split(",")[0]}</DashboardTitle>
+          <DashboardTitle data-testid="comparisonDashboardTitle">{cityListData.name.split(",")[0]}</DashboardTitle>
         </DashboardHeader>
         <DashboardTable>
           <DashboardGrid>
-            <DashboardHourBox>{cityListData.atualHour.split(" ")[1]}</DashboardHourBox>
-            <DashboardIconBox>
+            <DashboardHourBox data-testid="comparisonDashboardParam">{cityListData.atualHour.split(" ")[1]}</DashboardHourBox>
+            <DashboardIconBox data-testid="comparisonDashboardParam">
               <img src={cityListData.cityWeather[day].day.condition.icon.split("/")[6]} />
             </DashboardIconBox>
-            <DashboardTempMaxBox>{cityListData.cityWeather[day].day.maxtemp_c}º</DashboardTempMaxBox>
-            <DashboardTempMinBox>{cityListData.cityWeather[day].day.mintemp_c}º</DashboardTempMinBox>
-            <DashboardWindBox>
+            <DashboardTempMaxBox data-testid="comparisonDashboardParam">{cityListData.cityWeather[day].day.maxtemp_c}º</DashboardTempMaxBox>
+            <DashboardTempMinBox data-testid="comparisonDashboardParam">{cityListData.cityWeather[day].day.mintemp_c}º</DashboardTempMinBox>
+            <DashboardWindBox data-testid="comparisonDashboardParam">
               <WindIcon />
               {cityListData.cityWeather[day].day.maxwind_kph}km/h
             </DashboardWindBox>

@@ -37,7 +37,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "components"
-  ],
+, "__tests__/profile.test.js"],
   "exclude": [
     "node_modules"
   ]

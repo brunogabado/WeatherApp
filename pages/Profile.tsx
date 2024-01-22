@@ -408,7 +408,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
   const [userCityFilteredData, setUserCityFilteredData] = useState<filteredForecastProps | {}>({});
   //state with name and location of the user's city
   const [userCity, setUserCity] = useState<CityProps>(userData.userCity);
-
+console.log("userCity", userCityFilteredData)
   //state of the selected day index
   const [dayOfSearch, setDayOfSearch] = useState<number>(0);
   //state with the availables dates
@@ -746,7 +746,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
       </InputsListContainer>
 
       <DashBoardProfileSection ref={targetRef}>
-        <InfoDashBoardButton onClick={openInfoModal}>
+        <InfoDashBoardButton data-testid="infoButton" onClick={openInfoModal}>
           <InfoIcon />
         </InfoDashBoardButton>
         {!condition ? (
@@ -779,9 +779,9 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
       </DashBoardProfileSection>
 
       {infoModalOpen && (
-        <InfoModalContainer onClick={closeInfoModal}>
+        <InfoModalContainer data-testid="infoModal" onClick={closeInfoModal}>
           <BoxInfo onClick={stopPropagation}>
-            <CloseInfoButton onClick={closeInfoModal}>
+            <CloseInfoButton data-testid="closeInfoModalBtn" onClick={closeInfoModal}>
               <CloseIcon />
             </CloseInfoButton>
             <li>

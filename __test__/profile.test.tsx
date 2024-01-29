@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen, cleanup, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import ProfilePage from "@/pages/Profile";
 import { Provider } from "react-redux";
@@ -145,7 +145,7 @@ const buttonInteraction = async (button: HTMLButtonElement, day: string) => {
   }
 };
 
-//When test it all, the testing will be slowly because the multiple renders of the full page.
+// When test it all, the testing will be slowly because the multiple renders of the full page.
 
 test("Check if the info Button opens the infoModal, and if the modal closes well", async () => {
   render(

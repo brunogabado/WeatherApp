@@ -6,8 +6,6 @@ import Layout from "@/components/layout";
 import GlobalStyles from "@/GlobalStyles";
 import HydrationZustand from "@/components/HydrationComponent";
 import Head from "next/head";
-import { Helmet } from "react-helmet";
-import Link from "next/link";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

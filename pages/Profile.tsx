@@ -1,7 +1,7 @@
 import * as React from "react";
 import { GetServerSidePropsContext } from "next";
 import styled from "styled-components";
-import axios, { Axios } from "axios";
+import axios from "axios";
 import cookie from "cookie";
 import { getCookie } from "cookies-next";
 import { useState, useEffect, useRef } from "react";

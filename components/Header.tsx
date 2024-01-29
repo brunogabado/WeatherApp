@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { loginType, openModal, closeModal } from "@/state/modal/modalSlice";
+import { loginType, openModal } from "@/state/modal/modalSlice";
 import { useRouter } from "next/router";
 import { RootState } from "@/state/store";
 import { clearUserState } from "@/state/user/userSlice";
 import { deleteCookie } from "cookies-next";
-import { setIsLogged } from "@/state/user/userSlice";
 import LogoIcon from "./icons/LogoIcon";
 import BurguerMenuIcon from "./icons/BurgerMenuIcon";
 import CloseMenuIcon from "./icons/CloseMenuIcon";

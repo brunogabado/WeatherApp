@@ -162,8 +162,8 @@ const RegisterForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
 
   return (
     <>
-      <FormCard>
-        <CloseButton onClick={() => dispatch(closeModal())}>
+      <FormCard data-testid="registerForm">
+        <CloseButton data-testid="closeRegisterModalBtn" onClick={() => dispatch(closeModal())}>
           <CloseIcon />
         </CloseButton>
         <LogoContainerForm>
@@ -177,7 +177,7 @@ const RegisterForm: React.FC<FormProps> = ({ setErrorToDisplay }) => {
           <FormInput required autoComplete="on" type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
 
           <LinkLabel>Do you have an account?</LinkLabel>
-          <Link onClick={() => dispatch(loginType())}>LOGIN</Link>
+          <Link data-testid="changeToLoginLink" onClick={() => dispatch(loginType())}>LOGIN</Link>
 
           <SubmitButton type="submit">REGISTER</SubmitButton>
         </FormContainer>

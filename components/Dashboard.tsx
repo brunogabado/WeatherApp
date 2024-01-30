@@ -945,7 +945,7 @@ const Dashboard: React.FC<dashboardProps> = ({ temperaturesArr, iconsArr, dashbo
     month: "long",
   };
   return (
-    <DashboardContainer>
+    <DashboardContainer data-testid="forecastDashboard">
       <DashboardTable>
         <DashboardHeader>
           <DateSection>

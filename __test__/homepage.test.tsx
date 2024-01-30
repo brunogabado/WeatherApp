@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen, within } from "@testing-library/react";
+import { getAllByTestId, render, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import HomePage from "@/pages/index";
 import { Provider } from "react-redux";
@@ -37,14 +37,12 @@ test("testing the modal of Login and Register", async () => {
   //   register:
   await user.click(registerButton);
   let registerForm = screen.queryByTestId("registerForm");
-  console.log("1111111111111111111111111", registerForm);
   expect(registerForm).toBeInTheDocument();
   const closeRegisterBtn = screen.getByTestId("closeRegisterModalBtn");
   const changeToLoginLink = screen.getByTestId("changeToLoginLink");
   //close the modal
   await user.click(closeRegisterBtn);
   expect(registerForm).not.toBeInTheDocument();
-  console.log("22222222222222222222222222222", registerForm);
 
   // login:
   await user.click(loginButton);
@@ -57,22 +55,52 @@ test("testing the modal of Login and Register", async () => {
 
   //
   await user.click(changeToRegisterLink);
-  setTimeout(() => {
+  setTimeout(async () => {
     expect(loginForm).not.toBeInTheDocument();
     expect(registerForm).toBeInTheDocument();
-    user.click(changeToLoginLink);
-  }, 100);
+    await user.click(changeToLoginLink);
+  }, 500);
 
   //
 
-  setTimeout(() => {
+  setTimeout(async () => {
     expect(loginForm).toBeInTheDocument();
     expect(registerForm).not.toBeInTheDocument();
-  }, 100);
+    await user.click(closeLoginBtn);
+  }, 500);
 
   //close the modal
-  await user.click(closeLoginBtn);
-  expect(loginForm).not.toBeInTheDocument();
+  setTimeout(() => {
+    expect(loginForm).not.toBeInTheDocument();
+  }, 500);
 });
 
-test("Testing the forecast feature ", async () => {});
+test("Testing the forecast feature ", async () => {
+  render(
+    <Provider store={store}>
+      <HomePage isLogged={false} />
+    </Provider>,
+  );
+
+  const searchInput = screen.getByPlaceholderText("Search for a city...");
+
+  //writing Lamarosa in the search input to get the results
+  await user.click(searchInput);
+  await user.keyboard("Lamarosa");
+
+  setTimeout(async () => {
+    //getting the reusults
+    const listOfOptions = screen.getByRole("list");
+    const options = screen.getAllByRole("listitem");
+    // made some assumptions
+    expect(listOfOptions).toBeInTheDocument();
+    expect(options).toHaveLength(5);
+    //clicking on one option to render the forecast
+    await user.click(options[0]);
+  }, 500);
+
+  setTimeout(() => {
+    const forecastDashboards = screen.getAllByTestId("forecastDashboard");
+    expect(forecastDashboards).toHaveLength(6)
+  }, 500);
+});

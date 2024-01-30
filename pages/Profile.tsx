@@ -408,7 +408,7 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, userCityForecast, citie
   const [userCityFilteredData, setUserCityFilteredData] = useState<filteredForecastProps | {}>({});
   //state with name and location of the user's city
   const [userCity, setUserCity] = useState<CityProps>(userData.userCity);
-console.log("userCity", userCityFilteredData)
+
   //state of the selected day index
   const [dayOfSearch, setDayOfSearch] = useState<number>(0);
   //state with the availables dates
